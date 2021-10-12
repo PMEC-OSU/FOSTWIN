@@ -1,5 +1,3 @@
-# PLEASE NOTE THIS PROJECT IS STILL IN ALPHA TESTING
-
 # FOSTWIN Digital Twin
 
 Welcome to the open source FOSWEC (Floating Oscillating Surge Wave Energy Converter) digital twin project.  To learn more about FOSWEC devices and digital twin modeling, please check out these resources: [SNL](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) & [OSU](https://wave.oregonstate.edu/).
@@ -18,7 +16,7 @@ To develop a controller for the FOSTWIN digital twin, we've included a nearly bl
 
 As you can see, the starter has no actual control built in, further the position values from the flaps simulated in the digital twin are routed directly to the current output that is fed back into the digital twin model and wouldn't be good to use as is. If your controller doesn't have any parameters that would need to be updated when starting (or restarting) a simulation, or wouldn't need to be changed while the simulation is running, just terminate the inports and don't connect the outports to any wires in your controller model.  
 
-We've also provided a **defaultCtrlModel.slx** that creates a simple damping control system, this model may be helpful to examine to get get 
+We've also provided a **defaultCtrlModel.slx** that creates a simple damping control system, this model may be helpful to examine to get familiar with using the inports for control parameters and outports for logging data signals. 
 
 ![](/images/default.PNG)
 
@@ -29,10 +27,11 @@ While there is absolutely no requirement to manually change parameters within th
 Via the web platform, we have incorporated a UDP system that takes in the commands from the web UI, converts them from bytes to the appropriate data type, and feeds them into the control model selected (Default or an uploaded model you've created).  If you're running the model locally in non-realtime mode (**CURRENTLY NOT OPERATIONAL**), the control parameters still need to be initialized the same way, however changing during runtime isn't available.  If you're running the model in a realtime environment on your own Speedgoat, we've provided a ```ctrl()``` matlab function that wraps the ```target.setparam()``` Simulink realtime functionality.  Here's an example of how to use it from the matlab prompt:
 
 ```C++
->> initModels_GUI (initializes everything)
+>> initModels_GUI
 >> starttarget
 >> ctrl('param1', 15)
 >> ctrl('waveH', 2)
+>> stoptarget 
 ...
 ```
 
