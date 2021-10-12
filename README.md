@@ -2,7 +2,7 @@
 
 Welcome to the open source FOSWEC (Floating Oscillating Surge Wave Energy Converter) digital twin project.  To learn more about FOSWEC devices and digital twin modeling, please check out these resources: [SNL](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) & [OSU](https://wave.oregonstate.edu/).
 
-![](images/topLevel.png)
+![](/images/topLevel.png)
 
 # Getting Started
 In order to develop a control model and test it's realtime operation and behavior through the FOSTWIN web interface, we recommend you read through this readme first.  Then clone this repo and you're ready to start developing your controller for the FOSTWIN digital twin! 
@@ -12,13 +12,13 @@ If you're more interested in using the default control model and learning about 
 ## Controller
 To develop a controller for the FOSTWIN digital twin, we've included a nearly blank model called **CONTROLLER_STARTER.slx**, that we highly recommend you start out with.  This nearly blank controller simply has the required inports and outports to allow it to be dropped into the Top Level model. Without the correct number of inports and outports (as defined in the starter model), the uploaded control model will not be able to be used through the web platform. Here's what it looks like in Simulink:
 
-![](images/controller_starter.png)
+![](/images/controller_starter.png)
 
 As you can see, the starter has no actual control built in, further the position values from the flaps simulated in the digital twin are routed directly to the current output that is fed back into the digital twin model and wouldn't be good to use as is. If your controller doesn't have any parameters that would need to be updated when starting (or restarting) a simulation, or wouldn't need to be changed while the simulation is running, just terminate the inports and don't connect the outports to any wires in your controller model.  
 
 We've also provided a **defaultCtrlModel.slx** that creates a simple damping control system, this model may be helpful to examine to get get 
 
-![](images/default.png)
+![](/images/default.png)
 
 ## Control Params?
 
