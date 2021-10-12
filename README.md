@@ -2,7 +2,7 @@
 
 Welcome to the open source FOSWEC (Floating Oscillating Surge Wave Energy Converter) digital twin project.  To learn more about FOSWEC devices and digital twin modeling, please check out these resources: [SNL](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) & [OSU](https://wave.oregonstate.edu/).
 
-![](/images/topLevel.png)
+![](/images/topLevel.PNG)
 
 # Getting Started
 In order to develop a control model and test it's realtime operation and behavior through the FOSTWIN web interface, we recommend you read through this readme first.  Then clone this repo and you're ready to start developing your controller for the FOSTWIN digital twin! 
