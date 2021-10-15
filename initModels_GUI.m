@@ -12,7 +12,7 @@ clearvars; close all; clc;
 % wecSimPath = 'D:\src\WEC-Sim\source';
 
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
-wecSimPath = '';
+wecSimPath = 'D:\src\WEC-Sim\source';
 
 if strcmp(wecSimPath, '')
    fprintf('Need to set the path to your WEC-Sim install at line 15 of initModels_GUI.m')
@@ -35,7 +35,7 @@ param1 = 10; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 10; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '10'; % seconds
+stopTime = '60'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
@@ -60,7 +60,7 @@ twinType = 'WECSim';
 
 % pTg = Primary speedgoat used in SingleSpeedgoat option at line 28
 % example : pTgName = 'EGIBaseline';
-pTgName = '';
+pTgName = 'EGIBaseline';
 sTgName = '';
 
 if strcmp(pTgName, '')
@@ -175,9 +175,9 @@ set_param(pTopActiveConfig,'StopTime',stopTime);
 switch simulationType
     
     case 'NonRealTime'
-        set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
-        set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
-        set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        set_param(twinActiveConfig,'SolverType','Variable-step');
+        set_param(ctrlActiveConfig,'SolverType','Variable-step');
+        set_param(pTopActiveConfig,'SolverType','Variable-step');
     
         set_param([pTopModelName,'/ctrl'],'ModelName',ctrlModelName)
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','nonRT');
@@ -188,14 +188,19 @@ switch simulationType
         switchTarget(twinActiveConfig,solverNonRT,[]);
         switchTarget(ctrlActiveConfig,solverNonRT,[]);
         switchTarget(pTopActiveConfig,solverNonRT,[]);
-         
+        set_param([pTopModelName, '/param1'], 'Value', 'param1');
+        set_param([pTopModelName, '/param2'], 'Value', 'param2');
+        set_param([pTopModelName, '/param3'], 'Value', 'param3');
+        set_param([pTopModelName, '/param4'], 'Value', 'param4');
+        set_param([pTopModelName, '/waveH'], 'Value', 'waveH');
         % the order matters - save the top model last
         save_system(twinModelName)
         
         save_system(ctrlModelName)
         % save is what causes the refresh box
-        Simulink.ModelReference.refresh('pTopModel/twin'); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh('pTopModel/ctrl'); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh('pTopModel/twin/WECSim'); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh('pTopModel/twin/systemID'); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh('pTopModel/ctrl'); % fix the refresh dialogue box box
         
         save_system(pTopModelName)
        
@@ -216,7 +221,7 @@ switch simulationType
         
          % change the twin 
         set_param([pTopModelName,'/twin'],'OverrideUsingVariant',twinType)
-        
+       
         
        
         switchTarget(twinActiveConfig,solverRT,[]);
@@ -236,7 +241,7 @@ switch simulationType
         
         save_system(pTopModelName)
              
-        
+
         set_param(pTopModelName, 'RTWVerbose', 'off');
         fprintf('*** Build Simulink RT code (Single Speedgoat) ...\n\n')
        
