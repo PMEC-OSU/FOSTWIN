@@ -24,8 +24,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-%simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+%simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
 % CHANGE STARTING PARAMS HERE 
@@ -188,11 +188,11 @@ switch simulationType
         switchTarget(twinActiveConfig,solverNonRT,[]);
         switchTarget(ctrlActiveConfig,solverNonRT,[]);
         switchTarget(pTopActiveConfig,solverNonRT,[]);
-        set_param([pTopModelName, '/param1'], 'Value', 'param1');
-        set_param([pTopModelName, '/param2'], 'Value', 'param2');
-        set_param([pTopModelName, '/param3'], 'Value', 'param3');
-        set_param([pTopModelName, '/param4'], 'Value', 'param4');
-        set_param([pTopModelName, '/waveH'], 'Value', 'waveH');
+        set_param([pTopModelName, '/param1'], 'Value', param1);
+        set_param([pTopModelName, '/param2'], 'Value', param2);
+        set_param([pTopModelName, '/param3'], 'Value', param3);
+        set_param([pTopModelName, '/param4'], 'Value', param4);
+        set_param([pTopModelName, '/waveH'], 'Value', waveH);
         % the order matters - save the top model last
         save_system(twinModelName)
         
