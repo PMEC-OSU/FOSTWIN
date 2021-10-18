@@ -5,7 +5,7 @@ clearvars; close all; clc;
 % uncomment following line if wanting random waves with systemID 
 % and wanting to have the same waves for multiple runs (seed random
 % generator with same number)
-% rng(0)
+% rng('default')
 
 
 % Example wecSimPath variable - use full path 
