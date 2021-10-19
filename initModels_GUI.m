@@ -2,21 +2,21 @@
 % Twin and Controller systems
 clearvars; close all; clc;
 
-% uncomment following line if wanting random waves with systemID 
+% uncomment following line if wanting random waves with systemID
 % and wanting to have the same waves for multiple runs (seed random
 % generator with same number)
 % rng('default')
 
 
-% Example wecSimPath variable - use full path 
+% Example wecSimPath variable - use full path
 % wecSimPath = 'D:\src\WEC-Sim\source';
 
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
-wecSimPath = 'D:\src\WEC-Sim\source';
+wecSimPath = 'C:/Software/WEC-Sim/source';
 
 if strcmp(wecSimPath, '')
-   fprintf('Need to set the path to your WEC-Sim install at line 15 of initModels_GUI.m')
-   return
+    fprintf('Need to set the path to your WEC-Sim install at line 15 of initModels_GUI.m')
+    return
 end
 
 addpath(genpath(wecSimPath));
@@ -28,9 +28,9 @@ simulationType = 'NonRealTime';
 %simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
-% CHANGE STARTING PARAMS HERE 
-waveH = .136; 
-waveT = 2.61;  
+% CHANGE STARTING PARAMS HERE
+waveH = .136;
+waveT = 2.61;
 param1 = 10; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 10; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
@@ -42,19 +42,19 @@ N_OUT = 6;
 
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
 waveType = 'regular';
-%waveType = 'irregular';
+% waveType = 'irregular';
 
 
-pTopModelName = 'pTopModel';  % the primary top level model
+pTopModelName = 'FOSTWIN';  % the primary top level model
 sTopModelName = 'sTopModel';  % the secondary top level model
 
 % SWITCH COMMENT FOR CONTROLLER
 ctrlModelName = 'defaultCtrlModel';
 %ctrlModelName = 'CONTROL_STARTER';
 
-% SWITCH COMMENT FOR TWIN  
+% SWITCH COMMENT FOR TWIN
 twinType = 'WECSim';
-%twinType = 'systemID';
+% twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 
@@ -64,10 +64,10 @@ pTgName = 'EGIBaseline';
 sTgName = '';
 
 if strcmp(pTgName, '')
-   fprintf("Need to set your speedgoat target name in line 63");
-   return
+    fprintf("Need to set your speedgoat target name in line 63");
+    return
 end
-        
+
 if strcmp(twinType, 'WECSim')
     switch waveType
         case 'regular'
@@ -78,7 +78,7 @@ if strcmp(twinType, 'WECSim')
             fprintf('\nUnknown wave type selected... \n\nPlease choose regular vs irregular.');
             return
     end
-else 
+else
     Ts = 1/1000;
 end
 
@@ -94,7 +94,7 @@ switch twinType
         twinModelName = 'systemID';
     otherwise
         fprintf('Unknown Twin Model Name...\nUnable to compile...');
-        return 
+        return
 end
 
 % SystemID
@@ -111,10 +111,10 @@ N = 3.75;                                   % gear ratio between flap and motor
 switch twinType
     case 'WECSim'
         wecSimSetup;
-        % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick 
-        [Fexin, busInfo, admittance_ss] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
+        % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
+        [FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
     case 'systemID'
-        [Fexin, busInfo, admittance_ss] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
+        [FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
 
@@ -149,7 +149,7 @@ if in < N_IN || out < N_OUT
     fprintf('Expected %d Inports and %d Outports.  Found %d Inports and %d Outports.\n\n', N_IN, N_OUT, in, out);
     fprintf('Compilation Complete');
     return
-
+    
 end
 
 
@@ -157,10 +157,10 @@ end
 % operation
 current_dir = pwd;
 secondary_eCat_init = strcat(current_dir, '\esi\FOSTWIN_Secondary1.xml');
-set_param([pTopModelName, '/feedbackComs/twoSpeedgoats/EtherCAT Init'], 'config_file',secondary_eCat_init);
+% set_param([pTopModelName, '/feedbackComs/twoSpeedgoats/EtherCAT Init'], 'config_file',secondary_eCat_init);
 
 primary_eCat_init = strcat(current_dir, '\esi\FOSTWIN-Primary1.xml');
-set_param([pTopModelName, '/setpointComs/twoSpeedgoats/EtherCAT Init'], 'config_file',primary_eCat_init);
+% set_param([pTopModelName, '/setpointComs/twoSpeedgoats/EtherCAT Init'], 'config_file',primary_eCat_init);
 
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
@@ -175,40 +175,45 @@ set_param(pTopActiveConfig,'StopTime',stopTime);
 switch simulationType
     
     case 'NonRealTime'
-        set_param(twinActiveConfig,'SolverType','Variable-step');
-        set_param(ctrlActiveConfig,'SolverType','Variable-step');
-        set_param(pTopActiveConfig,'SolverType','Variable-step');
-    
+        set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        
         set_param([pTopModelName,'/ctrl'],'ModelName',ctrlModelName)
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','nonRT');
         set_param([pTopModelName,'/feedbackComs'],'OverrideUsingVariant','nonRT');
-        % set the twin 
+        % set the twin
         set_param([pTopModelName,'/twin'],'OverrideUsingVariant',twinType)
-
+        
         switchTarget(twinActiveConfig,solverNonRT,[]);
         switchTarget(ctrlActiveConfig,solverNonRT,[]);
         switchTarget(pTopActiveConfig,solverNonRT,[]);
-        set_param([pTopModelName, '/param1'], 'Value', param1);
-        set_param([pTopModelName, '/param2'], 'Value', param2);
-        set_param([pTopModelName, '/param3'], 'Value', param3);
-        set_param([pTopModelName, '/param4'], 'Value', param4);
-        set_param([pTopModelName, '/waveH'], 'Value', waveH);
+        %         set_param([pTopModelName, '/param1'], 'Value', param1);
+        %         set_param([pTopModelName, '/param2'], 'Value', param2);
+        %         set_param([pTopModelName, '/param3'], 'Value', param3);
+        %         set_param([pTopModelName, '/param4'], 'Value', param4);
+        %         set_param([pTopModelName, '/waveH'], 'Value', waveH);
         % the order matters - save the top model last
         save_system(twinModelName)
         
         save_system(ctrlModelName)
         % save is what causes the refresh box
-        Simulink.ModelReference.refresh('pTopModel/twin/WECSim'); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh('pTopModel/twin/systemID'); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh('pTopModel/ctrl'); % fix the refresh dialogue box box
+        Simulink.ModelReference.refresh('FOSTWIN/twin/WECSim'); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh('FOSTWIN/twin/systemID'); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh('FOSTWIN/ctrl'); % fix the refresh dialogue box box
         
         save_system(pTopModelName)
-       
+        
         
         open_system(pTopModelName)
-
+        
         data = sim(pTopModelName);
-        wecSimPost        
+        switch twinType
+            case 'WECSim'
+                wecSimPost;
+            case 'systemID'
+                FOSTWINctrlPost;
+        end
     case 'SingleSpeedgoat'
         
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
@@ -219,15 +224,15 @@ switch simulationType
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','singleSpeedgoat');
         set_param([pTopModelName,'/feedbackComs'],'OverrideUsingVariant','singleSpeedgoat');
         
-         % change the twin 
+        % change the twin
         set_param([pTopModelName,'/twin'],'OverrideUsingVariant',twinType)
-       
         
-       
+        
+        
         switchTarget(twinActiveConfig,solverRT,[]);
         switchTarget(ctrlActiveConfig,solverRT,[]);
         switchTarget(pTopActiveConfig,solverRT,[]);
-       
+        
         
         
         % the order matters - save the top model last
@@ -240,35 +245,35 @@ switch simulationType
         Simulink.ModelReference.refresh('pTopModel/ctrl'); % fix the refresh dialogue box
         
         save_system(pTopModelName)
-             
-
+        
+        
         set_param(pTopModelName, 'RTWVerbose', 'off');
         fprintf('*** Build Simulink RT code (Single Speedgoat) ...\n\n')
-       
+        
         try
-            slbuild(pTopModelName); 
+            slbuild(pTopModelName);
             app_object = slrealtime.Application(pTopModelName);
             updateRootLevelInportData(app_object);
         catch e
-           if isa(e,'MSLException')
-               fprintf('Error building model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
-               fprintf('Compilation Complete');
-               
-               return
-           end
-           if isa(e,'MException')
-               fprintf('Matlab Exception. Error building model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
-               fprintf('Compilation Complete');
-              
-               return
-               
-           end
-           fprintf('Unknown exception in building Simulink RT (Speedgoat) code...');
-           fprintf('Compilation Complete');
-           
-           return
+            if isa(e,'MSLException')
+                fprintf('Error building model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
+                fprintf('Compilation Complete');
+                
+                return
+            end
+            if isa(e,'MException')
+                fprintf('Matlab Exception. Error building model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
+                fprintf('Compilation Complete');
+                
+                return
+                
+            end
+            fprintf('Unknown exception in building Simulink RT (Speedgoat) code...');
+            fprintf('Compilation Complete');
+            
+            return
         end
-      
+        
         pTg = slrealtime(pTgName);
         
         try
@@ -277,14 +282,14 @@ switch simulationType
             fprintf('\n*** Target %s not connected. Stopping program. Check connection.\n',pTg.TargetSettings.name)
             fprintf('\n*** Matlab error \n %s \n\n',ME.getReport)
             fprintf('Compilation Complete')
-         
+            
             return
         end
         
         if pTg.isConnected
             fprintf('\n*** Target %s is connected at IP address %s. Waiting for start command ...\n\n',pTg.TargetSettings.name,pTg.TargetSettings.address)
             fprintf('Compilation Complete')
-           
+            
         end
         
         
@@ -293,35 +298,35 @@ switch simulationType
         sTopActiveConfig = getActiveConfigSet(sTopModelName);
         
         set_param(sTopModelName,'StopTime',stopTime);
-   
+        
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(sTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
-       
+        
         
         set_param([pTopModelName,'/ctrl'],'ModelName',ctrlModelName)
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','twoSpeedgoats');
         set_param([pTopModelName,'/feedbackComs'],'OverrideUsingVariant','twoSpeedgoats');
         
-       
-         
-        set_param([sTopModelName, '/EtherCAT Init'], 'config_file',secondary_eCat_init);
-        set_param([pTopModelName,'/twin'],'OverrideUsingVariant',twinType);  
         
-         
+        
+        set_param([sTopModelName, '/EtherCAT Init'], 'config_file',secondary_eCat_init);
+        set_param([pTopModelName,'/twin'],'OverrideUsingVariant',twinType);
+        
+        
         switchTarget(twinActiveConfig,solverRT,[]);
         switchTarget(ctrlActiveConfig,solverRT,[]);
         switchTarget(pTopActiveConfig,solverRT,[]);
         switchTarget(sTopActiveConfig,solverRT,[]);
-       
+        
         
         % the order matters - save the top model last
         save_system(twinModelName)
         save_system(ctrlModelName)
-         % save is what causes the refresh box
+        % save is what causes the refresh box
         Simulink.ModelReference.refresh('pTopModel/ctrl'); % refresh the new control model
-        Simulink.ModelReference.refresh('pTopModel/twin'); % fix the refresh dialogue box 
+        Simulink.ModelReference.refresh('pTopModel/twin'); % fix the refresh dialogue box
         Simulink.ModelReference.refresh('pTopModel/twin/WECSim'); % fix the refresh dialogue box
         Simulink.ModelReference.refresh('pTopModel/twin/systemID'); % fix the refresh dialogue box
         save_system(pTopModelName)
@@ -329,8 +334,8 @@ switch simulationType
         Simulink.ModelReference.refresh('sTopModel/twin/WECSim'); % fix the refresh dialogue box
         Simulink.ModelReference.refresh('sTopModel/twin/systemID'); % fix the refresh dialogue box
         save_system(sTopModelName)
-       
-         
+        
+        
         set_param(pTopModelName, 'RTWVerbose', 'off');
         set_param(sTopModelName, 'RTWVerbose', 'off');
         
@@ -341,54 +346,54 @@ switch simulationType
         try
             slbuild(pTopModelName)
         catch e
-           if isa(e,'MSLException')
-               fprintf('Error building primary (control) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
-               fprintf('Compilation Complete');
-        
-               return
-           end
-           if isa(e,'MException')
-               fprintf('Matlab Exception. Error building primary (control) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
-               fprintf('Compilation Complete');
+            if isa(e,'MSLException')
+                fprintf('Error building primary (control) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
+                fprintf('Compilation Complete');
+                
+                return
+            end
+            if isa(e,'MException')
+                fprintf('Matlab Exception. Error building primary (control) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
+                fprintf('Compilation Complete');
+                
+                return
+                
+            end
+            fprintf('Unknown exception in building Simulink RT (Speedgoat) code...');
+            fprintf('Compilation Complete');
             
-               return
-               
-           end
-           fprintf('Unknown exception in building Simulink RT (Speedgoat) code...');
-           fprintf('Compilation Complete');
-       
-           return
+            return
         end
-  
+        
         % build secondary - twin
         fprintf('*** Build Simulink RT code for secondary Speedgoat (twin) ...\n\n')
-       
+        
         try
             slbuild(sTopModelName)
             app_object = slrealtime.Application(sTopModelName);
             updateRootLevelInportData(app_object);
         catch e
-           if isa(e,'MSLException')
-               fprintf('Error building secondary (twin) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
-               fprintf('Compilation Complete');
-             
-               return
-           end
-           if isa(e,'MException')
-               fprintf('Matlab Exception. Error building secondary (twin) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
-               fprintf('Compilation Complete');
-             
-               return
-               
-           end
-           fprintf('Unknown exception in building Simulink RT (Speedgoat) code...');
-           fprintf('Compilation Complete');
-      
-           return
+            if isa(e,'MSLException')
+                fprintf('Error building secondary (twin) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
+                fprintf('Compilation Complete');
+                
+                return
+            end
+            if isa(e,'MException')
+                fprintf('Matlab Exception. Error building secondary (twin) model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)
+                fprintf('Compilation Complete');
+                
+                return
+                
+            end
+            fprintf('Unknown exception in building Simulink RT (Speedgoat) code...');
+            fprintf('Compilation Complete');
+            
+            return
         end
         
         
-          
+        
         pTg = slrealtime(pTgName);
         try
             pTg.connect
@@ -396,18 +401,18 @@ switch simulationType
             fprintf('\n*** Primary Target %s not connected. Stopping program. Check connection.\n',pTg.TargetSettings.name)
             fprintf('\n*** Matlab error \n %s \n\n',ME.getReport)
             fprintf('Compilation Complete')
-           
+            
             return
         end
         
         if pTg.isConnected
             fprintf('\n*** Primary Target %s is connected at IP address %s. Waiting for start command ...\n\n',pTg.TargetSettings.name,pTg.TargetSettings.address)
-           
+            
         end
         pTg.stop;
         pTg.load(pTopModelName);
-       % pTg.start;
-       
+        % pTg.start;
+        
         
         sTg = slrealtime(sTgName);
         try
@@ -416,24 +421,24 @@ switch simulationType
             fprintf('\n*** Secondary Target %s not connected. Stopping program. Check connection.\n',sTgName)
             fprintf('\n*** Matlab error \n %s \n\n',ME.getReport)
             fprintf('Compilation Complete')
-          
+            
             return
         end
         
         if sTg.isConnected
             fprintf('\n*** Secondary Target %s is connected at IP address %s. Waiting for start command ...\n\n',sTg.TargetSettings.name,sTg.TargetSettings.address)
             fprintf('Compilation Complete');
-          
+            
         end
         sTg.stop;
         sTg.load(sTopModelName);
-%         sTg.start;
-%         pTg.start;
+        %         sTg.start;
+        %         pTg.start;
         
     otherwise
         fprintf('Unknown simulation type: %s',simulationType);
         fprintf('Compilation Complete');
-      
+        
         
 end
 

@@ -1,4 +1,4 @@
-function [Fexin, busInfo, admittance_ss] = SIDWaveGenerator(TsTwin,duration,admittanceModel,excitationModel,waveH,waveT,wavetype)
+function [FexcAft, FexcBow, admittance_ss] = SIDWaveGenerator(TsTwin,duration,admittanceModel,excitationModel,waveH,waveT,wavetype)
 %SIDWAVEGENERATOR Generates excitation force time series for importing into
 %simulink.  'irregular' or 'regular' waves are wavetype options
 
@@ -132,6 +132,9 @@ if strcmp(wavetype,'irregular')
     % ylabel('Excitation spectrum magnitude')
     % legend('WAMIT','Interpolated')
     
+    FexcAft = timeseries(FexAft,t);
+    FexcBow = timeseries(FexBow,t);
+    
     Fexc.Aft = timeseries(FexAft,t);
     Fexc.Bow = timeseries(FexBow,t);
     busInfo = Simulink.Bus.createObject(Fexc);
@@ -169,6 +172,9 @@ elseif strcmp(wavetype,'regular')
     
     FexAft = FexAft .* r_win;
     FexBow = FexBow .* r_win;
+    
+    FexcAft = timeseries(FexAft,t);
+    FexcBow = timeseries(FexBow,t);
     
     Fexc.Aft = timeseries(FexAft,t);
     Fexc.Bow = timeseries(FexBow,t);
