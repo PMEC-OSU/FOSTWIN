@@ -41,8 +41,8 @@ N_IN = 6;
 N_OUT = 6;
 
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
-waveType = 'regular';
-% waveType = 'irregular';
+% waveType = 'regular';
+waveType = 'irregular';
 
 
 pTopModelName = 'FOSTWIN';  % the primary top level model
@@ -53,8 +53,8 @@ ctrlModelName = 'defaultCtrlModel';
 %ctrlModelName = 'CONTROL_STARTER';
 
 % SWITCH COMMENT FOR TWIN
-twinType = 'WECSim';
-% twinType = 'systemID';
+% twinType = 'WECSim';
+twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 

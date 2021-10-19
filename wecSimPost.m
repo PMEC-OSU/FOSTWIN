@@ -415,8 +415,8 @@ if simu.saveMat==1
        cd(parallelComputing_dir);
        simu.caseDir = [simu.caseDir filesep parallelComputing_dir];
     end
-    outputFile = [simu.caseDir filesep 'output' filesep simu.caseFile];
-    save(outputFile,'-v7.3')
+%     outputFile = [simu.caseDir filesep 'output' filesep simu.caseFile];
+%     save(outputFile,'-v7.3')
 end
 try 
     cd (['..' filesep parallelComputing_dir filesep '..' filesep]); 
