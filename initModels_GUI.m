@@ -24,8 +24,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-simulationType = 'NonRealTime';
-%simulationType = 'SingleSpeedgoat';
+% simulationType = 'NonRealTime';
+simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
 % CHANGE STARTING PARAMS HERE
@@ -44,8 +44,12 @@ N_OUT = 6;
 % waveType = 'regular';
 waveType = 'irregular';
 
-
-pTopModelName = 'FOSTWIN';  % the primary top level model
+switch simulationType
+    case 'NonRealTime'
+        pTopModelName = 'FOSTWIN';  % the primary top level model
+    case 'SingleSpeedgoat'
+        pTopModelName = 'pTopModel';
+end
 sTopModelName = 'sTopModel';  % the secondary top level model
 
 % SWITCH COMMENT FOR CONTROLLER
@@ -60,8 +64,9 @@ twinType = 'systemID';
 
 % pTg = Primary speedgoat used in SingleSpeedgoat option at line 28
 % example : pTgName = 'EGIBaseline';
-pTgName = 'EGIBaseline';
+pTgName = 'baseline1';
 sTgName = '';
+iotIPaddr = '192.168.7.2';
 
 if strcmp(pTgName, '')
     fprintf("Need to set your speedgoat target name in line 63");
@@ -102,6 +107,87 @@ admittanceModel = 'AdmittanceTF.mat';
 excitationModel = 'ExcitationWAMIT.mat';
 
 % =========================================================================
+%% === IoT addresses ======================================================
+iotLocalDataPort = 25001;
+iotRemoteDataPort = 54321;
+iotDataRate = 1*Ts; % need to fix this - should be able to use any rate
+
+iotLocalMsgPort = 25002;
+iotRemoteMsgPort = 54322;
+iotMsgRate = 1*Ts; % need to fix this - should be able to use any rate
+
+% UDP Recieve - need to add into this model still
+iotLocalParamPort = 25003;
+iotRemoteParamPort = 54323;
+iotListenRate = 1 * Ts; 
+
+
+% =========================================================================
+%% ========================UDP Recieve==================================
+% still need to define this for the output data types to work
+paramStruct.param1 = param1;
+paramStruct.param2 = param2;
+paramStruct.param3 = param3; % not used yet - developer will need to convert doubles to logical in their control 
+paramStruct.param4 = param4;
+paramStruct.param5 = waveH; % allow wave height changing if systemID - linear so can mult by height
+
+% enum for param pkts
+Simulink.defineIntEnumType('paramTypeEnum_Twin_v4', ... 
+    {'undefined', 'setParam1','setParam2','setParam3', 'setParam4', 'setParam5'}, ...
+    0:5, ... 
+    'Description', 'Param Type', ...
+    'DefaultValue', 'undefined', ...
+    'HeaderFile', 'paramTypeEnum_Twin_v4.h', ...
+    'DataScope', 'Exported', ...
+    'AddClassNameToEnumNames', true, ...
+    'StorageType', 'uint16');
+
+myBus = Simulink.Bus.createObject(paramStruct);
+myBusName = myBus.busName;
+
+%% === define enums =======================================================
+Simulink.defineIntEnumType('SimStateMsg', ... 
+	{'undefined', 'eCATState', 'eCATErr', 'eCATLastErr', 'cpuTET'}, ...
+	[0;1;2;3;4], ... 
+	'Description', 'Simulink State Message', ...
+	'DefaultValue', 'undefined', ...
+	'HeaderFile', 'simStateMsg.h', ...
+	'DataScope', 'Exported', ...
+	'AddClassNameToEnumNames', true, ...
+	'StorageType', 'uint8');
+
+Simulink.defineIntEnumType('pcktID', ... 
+	{'undefined', 'header', 'data','stateMsg',}, ...
+	0:3, ... 
+	'Description', 'packet ID', ...
+	'DefaultValue', 'undefined', ...
+	'HeaderFile', 'pcktID.h', ...
+	'DataScope', 'Exported', ...
+	'AddClassNameToEnumNames', true, ...
+	'StorageType', 'uint8');
+
+
+Simulink.defineIntEnumType('dataID_twin', ... 
+	{'undefined', 'current_aft', 'current_bow', 'position_aft', 'position_bow'}, ...
+	[0;11;22;33;44], ... 
+	'Description', 'data ID FOSTWIN', ...
+	'DefaultValue', 'undefined', ...
+	'HeaderFile', 'dataID_twin.h', ... %c code name
+	'DataScope', 'Exported', ...
+	'AddClassNameToEnumNames', true, ...
+	'StorageType', 'uint8');
+
+
+Simulink.defineIntEnumType('control_id_twin4', ... 
+	{'undefined', 'signal1', 'signal2', 'signal3', 'signal4', 'SimTime'}, ...
+	[0;55;66;77;88;99], ... 
+	'Description', 'controler data ID FOSTWIN', ...
+	'DefaultValue', 'undefined', ...
+	'HeaderFile', 'control_id_twin4.h', ... %c code name
+	'DataScope', 'Exported', ...
+	'AddClassNameToEnumNames', true, ...
+	'StorageType', 'uint8');
+%drawnow('update');
 
 %% === definition of constants ============================================
 Kt = 0.882355004501468;                     % taken from FOSWEC_params.mat Nm/A
@@ -112,9 +198,9 @@ switch twinType
     case 'WECSim'
         wecSimSetup;
         % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
-        [FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
+        [Fexin, FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
     case 'systemID'
-        [FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
+        [Fexin, FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
 
@@ -157,10 +243,10 @@ end
 % operation
 current_dir = pwd;
 secondary_eCat_init = strcat(current_dir, '\esi\FOSTWIN_Secondary1.xml');
-% set_param([pTopModelName, '/feedbackComs/twoSpeedgoats/EtherCAT Init'], 'config_file',secondary_eCat_init);
+set_param([pTopModelName, '/feedbackComs/twoSpeedgoats/EtherCAT Init'], 'config_file',secondary_eCat_init);
 
 primary_eCat_init = strcat(current_dir, '\esi\FOSTWIN-Primary1.xml');
-% set_param([pTopModelName, '/setpointComs/twoSpeedgoats/EtherCAT Init'], 'config_file',primary_eCat_init);
+set_param([pTopModelName, '/setpointComs/twoSpeedgoats/EtherCAT Init'], 'config_file',primary_eCat_init);
 
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
@@ -240,9 +326,9 @@ switch simulationType
         save_system(ctrlModelName)
         
         % save is what causes the refresh box
-        Simulink.ModelReference.refresh('pTopModel/twin/WECSim'); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh('pTopModel/twin/systemID'); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh('pTopModel/ctrl'); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh([pTopModelName,'/twin/WECSim']); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh([pTopModelName,'/twin/systemID']); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh([pTopModelName,'/ctrl']); % fix the refresh dialogue box
         
         save_system(pTopModelName)
         
@@ -291,7 +377,7 @@ switch simulationType
             fprintf('Compilation Complete')
             
         end
-        
+
         
     case 'TwoSpeedgoats'
         load_system(sTopModelName)

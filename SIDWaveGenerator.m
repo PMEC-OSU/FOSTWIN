@@ -1,4 +1,4 @@
-function [FexcAft, FexcBow, admittance_ss] = SIDWaveGenerator(TsTwin,duration,admittanceModel,excitationModel,waveH,waveT,wavetype)
+function [Fexin, FexcAft, FexcBow, admittance_ss] = SIDWaveGenerator(TsTwin,duration,admittanceModel,excitationModel,waveH,waveT,wavetype)
 %SIDWAVEGENERATOR Generates excitation force time series for importing into
 %simulink.  'irregular' or 'regular' waves are wavetype options
 
