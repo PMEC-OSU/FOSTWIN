@@ -40,6 +40,7 @@ The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time 
 ## System identification model
 The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory.  System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system.  Input is the motor torque and output is motor position.  
 ![](/images/systemID.png)
+
 Wave input is achieved by generating a wave surface elevation time series, then using results from WAMIT to create an associated excitation force time series.
 
 
