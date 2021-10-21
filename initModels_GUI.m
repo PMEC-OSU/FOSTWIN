@@ -57,8 +57,8 @@ ctrlModelName = 'defaultCtrlModel';
 %ctrlModelName = 'CONTROL_STARTER';
 
 % SWITCH COMMENT FOR TWIN
-% twinType = 'WECSim';
-twinType = 'systemID';
+twinType = 'WECSim';
+% twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 
