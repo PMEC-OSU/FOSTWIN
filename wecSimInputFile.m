@@ -128,13 +128,13 @@ body(5).cb = [0,0,0];
 pto(1)= ptoClass('PTO_flap1');
 pto(1).loc = [-0.65 0 -0.6];
 % apply damping of 0.1 Nms at motor
-pto(1).c = 0.1;
+% pto(1).c = 0.1;
 
 %% PTO 2: Rotational PTO (PTO 2)
 pto(2)= ptoClass('PTO_flap2');
 pto(2).loc = [0.65 0 -0.6];
 % apply damping of 0.1 Nms at motor
-pto(2).c = 0.1;
+% pto(2).c = 0.1;
 
 %% PTO 3: Rotational PTO (Connection 1)
 pto(3) = ptoClass('connection_1');

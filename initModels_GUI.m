@@ -24,25 +24,25 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-% simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
 % CHANGE STARTING PARAMS HERE
 waveH = .136;
 waveT = 2.61;
-param1 = 10; % AFT DAMPING - IN DEFAULT CONTROL
-param2 = 10; % BOW DAMPING - IN DEAULT CONTROL
+param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
+param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '60'; % seconds
+stopTime = '300'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
 
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
-% waveType = 'regular';
-waveType = 'irregular';
+waveType = 'regular';
+% waveType = 'irregular';
 
 switch simulationType
     case 'NonRealTime'
