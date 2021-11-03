@@ -24,8 +24,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-simulationType = 'NonRealTime';
-% simulationType = 'SingleSpeedgoat';
+% simulationType = 'NonRealTime';
+simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
 % CHANGE STARTING PARAMS HERE
@@ -35,7 +35,7 @@ param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '300'; % seconds
+stopTime = '120'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
@@ -57,8 +57,8 @@ ctrlModelName = 'defaultCtrlModel';
 %ctrlModelName = 'CONTROL_STARTER';
 
 % SWITCH COMMENT FOR TWIN
-twinType = 'WECSim';
-% twinType = 'systemID';
+% twinType = 'WECSim';
+twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 
