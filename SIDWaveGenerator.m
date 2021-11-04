@@ -21,7 +21,7 @@ duration = str2num(duration);
 if strcmp(wavetype,'irregular')
     %% JONSWAP wave parameters
     
-    Hm0 = 1; % waveH;  Normalizing Hm0 so we can scale linearly in real-time
+    Hm0 = waveH;  
     Tp = waveT;
     gamma = 3.3;
     
@@ -163,14 +163,14 @@ if strcmp(wavetype,'irregular')
     [~,cg] = phase_speed(h,1./f);
     cg(1) = 0;  % avoid NaN from divide by zero
     Ef = rho*g*trapz(f',cg'.*S');
-    Ef = Ef.*waveH^2;
+%     Ef = Ef.*waveH^2;
 elseif strcmp(wavetype,'regular')
 %     TsTwin = TsTwin * 10;
     t = 0:TsTwin:duration;
-    H = 1; % Normalizing H so we can scale linearly in real-time
+    waveH= 1; % Normalizing H so we can scale linearly in real-time
     
-    Faftabs = interp1(wamit.w,H/2*abs(wamit.FexAftPitch),2*pi/waveT,'spline');
-    Fbowabs = interp1(wamit.w,H/2*abs(wamit.FexBowPitch),2*pi/waveT,'spline');
+    Faftabs = interp1(wamit.w,waveH/2*abs(wamit.FexAftPitch),2*pi/waveT,'spline');
+    Fbowabs = interp1(wamit.w,waveH/2*abs(wamit.FexBowPitch),2*pi/waveT,'spline');
     Faftangle = interp1(wamit.w,angle(wamit.FexAftPitch),2*pi/waveT,'spline');
     Fbowangle = interp1(wamit.w,angle(wamit.FexBowPitch),2*pi/waveT,'spline');
     
@@ -199,10 +199,10 @@ elseif strcmp(wavetype,'regular')
     [L,~,~] = dispersion(h,waveT);
     k = 2*pi/L;
     D = (1+2*k*h/(sinh(2*k*h)))*tanh(k*h);
-    A = H/2;
+    A = waveH/2;
     w = 2*pi/waveT;
     Ef = rho*g^2*D*A^2/(4*w);  % Energy flux in W/m
-    Ef = Ef.*waveH^2;
+%     Ef = Ef.*waveH^2;
 
 
 end

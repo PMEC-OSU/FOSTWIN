@@ -21,6 +21,8 @@ end
 
 addpath(genpath(wecSimPath));
 
+
+
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
@@ -31,11 +33,11 @@ simulationType = 'SingleSpeedgoat';
 % CHANGE STARTING PARAMS HERE
 waveH = .136;
 waveT = 2.61;
-param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
-param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
+param1 = 2.5; % AFT DAMPING - IN DEFAULT CONTROL
+param2 = 2.5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '1000'; % seconds
+stopTime = '200'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
@@ -87,10 +89,8 @@ else
     Ts = 1/1000;
 end
 
-
 solverRT = 'slrealtime.tlc';
 solverNonRT = 'grt.tlc';
-
 
 switch twinType
     case 'WECSim'
@@ -200,7 +200,7 @@ switch twinType
         % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
         [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
     case 'systemID'
-        [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,waveH,waveT, waveType); % always passing in 1 for waveH now - mult with gain
+        [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
 %% === Setting up the model parameters ====================================
