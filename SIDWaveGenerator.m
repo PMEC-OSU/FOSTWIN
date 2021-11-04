@@ -1,6 +1,11 @@
-function [Fexin, FexcAft, FexcBow, admittance_ss] = SIDWaveGenerator(TsTwin,duration,admittanceModel,excitationModel,waveH,waveT,wavetype)
+function [Fexin, FexcAft, FexcBow, admittance_ss, Ef] = SIDWaveGenerator(TsTwin,duration,admittanceModel,excitationModel,waveH,waveT,wavetype)
 %SIDWAVEGENERATOR Generates excitation force time series for importing into
 %simulink.  'irregular' or 'regular' waves are wavetype options
+
+%% constants
+rho = 999.1033;
+g = 9.8056;
+h = 1.36; 
 
 %% load transfer function data
 wamit = load(excitationModel);
@@ -16,7 +21,7 @@ duration = str2num(duration);
 if strcmp(wavetype,'irregular')
     %% JONSWAP wave parameters
     
-    Hm0 = waveH;
+    Hm0 = 1; % waveH;  Normalizing Hm0 so we can scale linearly in real-time
     Tp = waveT;
     gamma = 3.3;
     
@@ -154,12 +159,18 @@ if strcmp(wavetype,'irregular')
     Fexin = Fexin.addElement(Fexc.Aft,'FexAft');
     Fexin = Fexin.addElement(Fexc.Bow,'FexBow');
     
+    %% calculate energy flux from Dean and Dalrymple pg 98 (4.81)
+    [~,cg] = phase_speed(h,1./f);
+    cg(1) = 0;  % avoid NaN from divide by zero
+    Ef = rho*g*trapz(f',cg'.*S');
+    Ef = Ef.*waveH^2;
 elseif strcmp(wavetype,'regular')
 %     TsTwin = TsTwin * 10;
     t = 0:TsTwin:duration;
+    H = 1; % Normalizing H so we can scale linearly in real-time
     
-    Faftabs = interp1(wamit.w,waveH/2*abs(wamit.FexAftPitch),2*pi/waveT,'spline');
-    Fbowabs = interp1(wamit.w,waveH/2*abs(wamit.FexBowPitch),2*pi/waveT,'spline');
+    Faftabs = interp1(wamit.w,H/2*abs(wamit.FexAftPitch),2*pi/waveT,'spline');
+    Fbowabs = interp1(wamit.w,H/2*abs(wamit.FexBowPitch),2*pi/waveT,'spline');
     Faftangle = interp1(wamit.w,angle(wamit.FexAftPitch),2*pi/waveT,'spline');
     Fbowangle = interp1(wamit.w,angle(wamit.FexBowPitch),2*pi/waveT,'spline');
     
@@ -184,6 +195,16 @@ elseif strcmp(wavetype,'regular')
     Fexin = Fexin.addElement(Fexc.Aft,'FexAft');
     Fexin = Fexin.addElement(Fexc.Bow,'FexBow');
     
+    %% calculate wave energy flux from Falnes pg 78
+    [L,~,~] = dispersion(h,waveT);
+    k = 2*pi/L;
+    D = (1+2*k*h/(sinh(2*k*h)))*tanh(k*h);
+    A = H/2;
+    w = 2*pi/waveT;
+    Ef = rho*g^2*D*A^2/(4*w);  % Energy flux in W/m
+    Ef = Ef.*waveH^2;
+
+
 end
 
 

@@ -35,14 +35,14 @@ param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '120'; % seconds
+stopTime = '1000'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
 
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
-waveType = 'regular';
-% waveType = 'irregular';
+% waveType = 'regular';
+waveType = 'irregular';
 
 switch simulationType
     case 'NonRealTime'
@@ -198,14 +198,10 @@ switch twinType
     case 'WECSim'
         wecSimSetup;
         % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
-        [Fexin, FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
+        [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
     case 'systemID'
-        [Fexin, FexAft, FexBow, admittance_ss] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
+        [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,waveH,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
-
-
-
-
 
 %% === Setting up the model parameters ====================================
 load_system(twinModelName)
