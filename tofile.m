@@ -1,5 +1,7 @@
 % script to put the workspace variable into a .mat file to allow the
 % developer to collect full resulution data and post-process on their own
+
+% ONLY NEEDED WHEN RUNNING THE CTRL IN REALTIME MODE ON A SPEEGOAT
 if exist('logsout','var')
     data1 = logsout.FileLogSignals;
     numdatasets = numElements(data1);
@@ -18,6 +20,8 @@ if exist('logsout','var')
     end
     
 output.Power.AveragePower = squeeze(output.Power.AveragePower);
+output.ControlSignals.CaptureWidth = squeeze(output.ControlSignals.CaptureWidth);
+output.ControlSignals.Control_Param4 = squeeze(output.ControlSignals.Control_Param4);
 
         output.Conditions.wave.H = waveH;
         output.Conditions.wave.T = waveT;

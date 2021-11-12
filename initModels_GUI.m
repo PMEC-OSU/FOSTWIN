@@ -26,7 +26,7 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-% simulationType = 'NonRealTime';
+%  simulationType = 'NonRealTime';
 simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
@@ -46,12 +46,7 @@ N_OUT = 6;
 % waveType = 'regular';
 waveType = 'irregular';
 
-switch simulationType
-    case 'NonRealTime'
-        pTopModelName = 'FOSTWIN';  % the primary top level model
-    case 'SingleSpeedgoat'
-        pTopModelName = 'pTopModel';
-end
+
 sTopModelName = 'sTopModel';  % the secondary top level model
 
 % SWITCH COMMENT FOR CONTROLLER
@@ -63,17 +58,16 @@ ctrlModelName = 'defaultCtrlModel';
 twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
-
-% pTg = Primary speedgoat used in SingleSpeedgoat option at line 28
 % example : pTgName = 'EGIBaseline';
 pTgName = 'baseline1';
 sTgName = '';
-iotIPaddr = '192.168.7.2';
+
 
 if strcmp(pTgName, '')
-    fprintf("Need to set your speedgoat target name in line 63");
+    fprintf("Need to set your speedgoat target name in line 62");
     return
 end
+
 
 if strcmp(twinType, 'WECSim')
     switch waveType
@@ -87,6 +81,28 @@ if strcmp(twinType, 'WECSim')
     end
 else
     Ts = 1/1000;
+end
+
+
+switch simulationType
+    case 'NonRealTime'
+        pTopModelName = 'FOSTWIN';  % the primary top level model
+    case 'SingleSpeedgoat'
+        pTopModelName = 'pTopModel';
+        switch waveType
+            case "regular"
+                numPeriods = 5;
+                numSteps = numPeriods*waveT*1/Ts;
+                numSteps = cast(numSteps, 'int32');
+            case "irregular"
+                numPeriods = 60;
+                numSteps = numPeriods*waveT*1/Ts;
+                numSteps = cast(numSteps, 'int32');
+            otherwise 
+                numPeriods = 60;
+                numSteps = numPeriods*waveT*1/Ts;
+                numSteps = cast(numSteps, 'int32');
+        end
 end
 
 solverRT = 'slrealtime.tlc';
@@ -107,87 +123,6 @@ admittanceModel = 'AdmittanceTF.mat';
 excitationModel = 'ExcitationWAMIT.mat';
 
 % =========================================================================
-%% === IoT addresses ======================================================
-iotLocalDataPort = 25001;
-iotRemoteDataPort = 54321;
-iotDataRate = 1*Ts; % need to fix this - should be able to use any rate
-
-iotLocalMsgPort = 25002;
-iotRemoteMsgPort = 54322;
-iotMsgRate = 1*Ts; % need to fix this - should be able to use any rate
-
-% UDP Recieve - need to add into this model still
-iotLocalParamPort = 25003;
-iotRemoteParamPort = 54323;
-iotListenRate = 1 * Ts; 
-
-
-% =========================================================================
-%% ========================UDP Recieve==================================
-% still need to define this for the output data types to work
-paramStruct.param1 = param1;
-paramStruct.param2 = param2;
-paramStruct.param3 = param3; % not used yet - developer will need to convert doubles to logical in their control 
-paramStruct.param4 = param4;
-paramStruct.param5 = waveH; % allow wave height changing if systemID - linear so can mult by height
-
-% enum for param pkts
-Simulink.defineIntEnumType('paramTypeEnum_Twin_v4', ... 
-    {'undefined', 'setParam1','setParam2','setParam3', 'setParam4', 'setParam5'}, ...
-    0:5, ... 
-    'Description', 'Param Type', ...
-    'DefaultValue', 'undefined', ...
-    'HeaderFile', 'paramTypeEnum_Twin_v4.h', ...
-    'DataScope', 'Exported', ...
-    'AddClassNameToEnumNames', true, ...
-    'StorageType', 'uint16');
-
-myBus = Simulink.Bus.createObject(paramStruct);
-myBusName = myBus.busName;
-
-%% === define enums =======================================================
-Simulink.defineIntEnumType('SimStateMsg', ... 
-	{'undefined', 'eCATState', 'eCATErr', 'eCATLastErr', 'cpuTET'}, ...
-	[0;1;2;3;4], ... 
-	'Description', 'Simulink State Message', ...
-	'DefaultValue', 'undefined', ...
-	'HeaderFile', 'simStateMsg.h', ...
-	'DataScope', 'Exported', ...
-	'AddClassNameToEnumNames', true, ...
-	'StorageType', 'uint8');
-
-Simulink.defineIntEnumType('pcktID', ... 
-	{'undefined', 'header', 'data','stateMsg',}, ...
-	0:3, ... 
-	'Description', 'packet ID', ...
-	'DefaultValue', 'undefined', ...
-	'HeaderFile', 'pcktID.h', ...
-	'DataScope', 'Exported', ...
-	'AddClassNameToEnumNames', true, ...
-	'StorageType', 'uint8');
-
-
-Simulink.defineIntEnumType('dataID_twin', ... 
-	{'undefined', 'current_aft', 'current_bow', 'position_aft', 'position_bow'}, ...
-	[0;11;22;33;44], ... 
-	'Description', 'data ID FOSTWIN', ...
-	'DefaultValue', 'undefined', ...
-	'HeaderFile', 'dataID_twin.h', ... %c code name
-	'DataScope', 'Exported', ...
-	'AddClassNameToEnumNames', true, ...
-	'StorageType', 'uint8');
-
-
-Simulink.defineIntEnumType('control_id_twin4', ... 
-	{'undefined', 'signal1', 'signal2', 'signal3', 'signal4', 'SimTime'}, ...
-	[0;55;66;77;88;99], ... 
-	'Description', 'controler data ID FOSTWIN', ...
-	'DefaultValue', 'undefined', ...
-	'HeaderFile', 'control_id_twin4.h', ... %c code name
-	'DataScope', 'Exported', ...
-	'AddClassNameToEnumNames', true, ...
-	'StorageType', 'uint8');
-%drawnow('update');
 
 %% === definition of constants ============================================
 Kt = 0.882355004501468;                     % taken from FOSWEC_params.mat Nm/A
@@ -270,11 +205,7 @@ switch simulationType
         switchTarget(twinActiveConfig,solverNonRT,[]);
         switchTarget(ctrlActiveConfig,solverNonRT,[]);
         switchTarget(pTopActiveConfig,solverNonRT,[]);
-        %         set_param([pTopModelName, '/param1'], 'Value', param1);
-        %         set_param([pTopModelName, '/param2'], 'Value', param2);
-        %         set_param([pTopModelName, '/param3'], 'Value', param3);
-        %         set_param([pTopModelName, '/param4'], 'Value', param4);
-        %         set_param([pTopModelName, '/waveH'], 'Value', waveH);
+  
         % the order matters - save the top model last
         save_system(twinModelName)
         
