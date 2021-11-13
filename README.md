@@ -1,15 +1,89 @@
 # FOSTWIN Digital Twin
 
-Welcome to the open source FOSWEC (Floating Oscillating Surge Wave Energy Converter) digital twin project.  To learn more about FOSWEC devices and digital twin modeling, please check out these resources: [SNL](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) & [OSU](https://wave.oregonstate.edu/).
+<img style="height:300px;float:right;margin-bottom:10px;" src="images/FOSWEC2_HWRL.png">
 
-![](/images/topLevel.PNG)
+- [FOSTWIN Digital Twin](#fostwin-digital-twin)
+- [Getting Started](#getting-started)
+  - [Purpose](#purpose)
+      - [New Users](#new-users)
+      - [Experienced Users](#experienced-users)
+- [Using the Web Interface](#using-the-web-interface)
+  - [Compilation](#compilation)
+  - [Control Parameters](#control-parameters)
+  - [Model Upload](#model-upload)
+  - [Start/ Stop FOSTWIN](#start-stop-fostwin)
+  - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
+  - [Finished With System](#finished-with-system)
+  - [Edit Control Display](#edit-control-display)
+- [Developing A Controller](#developing-a-controller)
+  - [Control Parameters](#control-parameters-1)
+  
+
 
 # Getting Started
-In order to develop a control model and test it's realtime operation and behavior through the FOSTWIN web interface, we recommend you read through this readme first.  Then clone this repo and you're ready to start developing your controller for the FOSTWIN digital twin! 
+## Purpose
 
-If you're more interested in using the default control model and learning about FOSWEC system through the web interface, we recommend you read through [this](./DigitalTwins.md) readme to get familiar with the digital twin(s) you'll be controlling.
+In a joint effort between [SNL](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [OSU](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co/speedgoat-simulink-rt-services/), we present this open source repository and a web based platform allowing MATLAB & Simulink developers to interact with a Digital Twin of a Floating Oscillating Surge Wave Energy Device (FOSWEC).  Information about the FOSWEC device being simulated in the Digital Twins included in this repo and the web interface can be found [here](./DigitalTwins.md).
 
-## Controller
+The web based platform aims to serve a mix of different users with varying experience and dynamics modeling skill levels, from someone who wants to get familiar with realtime Digital Twin simulations to someone who has access to the realtime Simulink toolboxes and wants to test their custom controller model but doesn't have the realtime [Speedgoat](https://www.speedgoat.com/speedgoat-solutions?utm_term=&utm_campaign=Dynamic+Ad+Groups&utm_source=adwords&utm_medium=ppc&hsa_acc=6520550235&hsa_cam=887795487&hsa_grp=43284490926&hsa_ad=208143357041&hsa_src=g&hsa_tgt=aud-387379185812:dsa-295317350131&hsa_kw=&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gclid=EAIaIQobChMIiNj__c3F8wIVBQutBh1JvQioEAAYAiAAEgJZsfD_BwE) hardware.
+
+#### New Users
+
+If you're someone who is wanting to get familiar with the idea of realtime simulations, FOSWEC's, and digital twins, read the section [below](#using-the-web-interface), skip the model upload, and select **Default Control** in the compilation option box in the web UI.  We'd also recommend you read through [this](./DigitalTwins.md) readme to get a baseline understanding about what's happening in the digital twins.
+
+#### Experienced Users
+
+If you're up to speed with the web interface and are ready to work on developing your own Controller model, we recommend you skip to to [Developing A Controller](#developing-a-controller) & read [this](./DigitalTwins.md) digital twin readme.  
+
+# Using the Web Interface
+
+## Compilation
+
+![](images/compilation.png)
+
+The options shown in this box are all parameters in the models that cannot be changed without recompiling the code that is executed on the speedgoat hardware.  In order to change any of these options, you must stop any running simulation, then press the "Start Compilation!" button. You will first be met with a success/ failure message that will pop up in the compilation options box, then as the project compiles the Compilation Report box directly to the right of the options will start to output information about the options selected, then information about the compilation itself. 
+
+**COMPILATION COMPLETE WILL BE RENDERED AT THE END OF THE COMPILATION REPORT INDICATING THE SYSTEM IS READY TO BE STARTED**
+
+## Control Parameters
+
+![](images/ctrlparams.png)
+
+**WHEN "START FOSTWIN" IS PRESSED, THE INITIAL VALUES FOR THE CONTROL PARAMETER VALUES ARE TAKEN FROM THESE SLIDERS**
+
+The **Default Control** option built into the system has the ability to change the damping forces that are applied to the simulated motor torque shaft *while* the simulation is running, this is a unique benefit to running a simulation in realtime.  Try increasing or decreasing the damping, then watching the power, current, and position charts change in the UI.
+
+While these values are able to be changed in realtime, when you start a simulation, these values need to be initialized to some starting value.  When you press the start simulation button, the values shown on the sliders (or spinners) are set as the starting values for the Aft and Bow Damping.  **There is absolutely no requirement to change parameters during a simulation but it's available if you want to!**
+
+You'll likely note that "Param3" and "Param4" don't have a unique name and are set to 0 by default, this is because we've built the system to allow for a custom controller to be uploaded into the system, where it could also have parameters that can be changed during the running simulation.  We currently allow for four input parameters to the controller model, again with no requirement to use them, so these "Param3" and "Param4" sliders have no effect on the Default Control model, but are there to allow for the ability to control models with more complex input parameters.  More information about the control parameters and uploading a custom controller is [here](#developing-a-controller).
+
+## Model Upload
+
+
+## Start/ Stop FOSTWIN
+
+
+## Prepare & Download Data (and data definitions)
+
+## Finished With System
+
+
+## Edit Control Display
+
+![](images/editctrldisp.png)
+
+Wen you click the "Edit Control Display" button, you'll be met with the options above.  The purpose here is to make the UI reflect your custom controller.  The Signal names across the top row will update the labels on the very bottom chart on in the UI.  This chart is configured to show any data set up in your uploaded control model that is sent to one of the four available outputs.  This is simply to improve your experience and can be totally skipped if you're fine with the shown names.  
+
+The Param options for the rest of the dialogue box are just for setting names, ranges, and types for the control options.  We have it pre-populated with realistic ranges and correct names if "Default Control" is selected in the compilation options.  The Type is either a range (slider) or a spinner (a numeric input with up and down arrows to increment the value).  
+
+**The primary difference between range and spinner is a spinner sends the param when "set param" button is pressed, and the sliders set the param and send it to the speedgoat when the slider is released.**
+
+**Pressing "Update" button will refresh the page.**
+
+
+
+# Developing A Controller
+
 To develop a controller for the FOSTWIN digital twin, we've included a nearly blank model called **CONTROLLER_STARTER.slx**, that we highly recommend you start out with.  This nearly blank controller simply has the required inports and outports to allow it to be dropped into the Top Level model. Without the correct number of inports and outports (as defined in the starter model), the uploaded control model will not be able to be used through the web platform. Here's what it looks like in Simulink:
 
 ![](/images/controller_starter.PNG)
