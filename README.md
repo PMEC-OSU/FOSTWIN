@@ -1,6 +1,6 @@
 # FOSTWIN Digital Twin
 
-<img style="height:300px;float:right;margin-bottom:10px;" src="images/FOSWEC2_HWRL.png">
+<img style="height:200px;float:right;margin-bottom:10px;" src="images/FOSWEC2_HWRL.png">
 
 - [FOSTWIN Digital Twin](#fostwin-digital-twin)
 - [Getting Started](#getting-started)
