@@ -26,8 +26,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-%  simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 %simulationType = 'TwoSpeedgoats';
 
 % CHANGE STARTING PARAMS HERE
@@ -37,14 +37,14 @@ param1 = 2.5; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 2.5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '200'; % seconds
+stopTime = '60'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
 
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
-% waveType = 'regular';
-waveType = 'irregular';
+waveType = 'regular';
+% waveType = 'irregular';
 
 
 sTopModelName = 'sTopModel';  % the secondary top level model
@@ -54,8 +54,8 @@ ctrlModelName = 'defaultCtrlModel';
 %ctrlModelName = 'CONTROL_STARTER';
 
 % SWITCH COMMENT FOR TWIN
-% twinType = 'WECSim';
-twinType = 'systemID';
+twinType = 'WECSim';
+% twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
@@ -87,6 +87,21 @@ end
 switch simulationType
     case 'NonRealTime'
         pTopModelName = 'FOSTWIN';  % the primary top level model
+        switch waveType
+            case "regular"
+                numPeriods = 5;
+                numSteps = numPeriods*waveT*1/Ts;
+                numSteps = cast(numSteps, 'int32');
+            case "irregular"
+                numPeriods = 60;
+                numSteps = numPeriods*waveT*1/Ts;
+                numSteps = cast(numSteps, 'int32');
+            otherwise
+                numPeriods = 60;
+                numSteps = numPeriods*waveT*1/Ts;
+                numSteps = cast(numSteps, 'int32');
+        end
+        
     case 'SingleSpeedgoat'
         pTopModelName = 'pTopModel';
         switch waveType
@@ -98,7 +113,7 @@ switch simulationType
                 numPeriods = 60;
                 numSteps = numPeriods*waveT*1/Ts;
                 numSteps = cast(numSteps, 'int32');
-            otherwise 
+            otherwise
                 numPeriods = 60;
                 numSteps = numPeriods*waveT*1/Ts;
                 numSteps = cast(numSteps, 'int32');
@@ -205,7 +220,7 @@ switch simulationType
         switchTarget(twinActiveConfig,solverNonRT,[]);
         switchTarget(ctrlActiveConfig,solverNonRT,[]);
         switchTarget(pTopActiveConfig,solverNonRT,[]);
-  
+        
         % the order matters - save the top model last
         save_system(twinModelName)
         
@@ -304,7 +319,7 @@ switch simulationType
             fprintf('Compilation Complete')
             
         end
-
+        
         
     case 'TwoSpeedgoats'
         load_system(sTopModelName)

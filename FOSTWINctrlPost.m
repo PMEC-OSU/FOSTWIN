@@ -1,24 +1,25 @@
 
 if exist('data','var')
-    datar = data.output;
-    output.FOSTWINctrl.time = data.tout;
     
-    clear data
+    blockNames = {'ControlSignals','Power'}; % get(data);
     
-    output.FOSTWINctrl.bow.pos = datar.Data(:,1);
-    output.FOSTWINctrl.aft.pos = datar.Data(:,2);
+    for i = 1:length(blockNames)
+        signalNames = fieldnames(data.(blockNames{i}));
+        for j = 1:length(signalNames)
+            output.(blockNames{i}).(signalNames{j}) = data.(blockNames{i}).(signalNames{j}).Data;
+            output.(blockNames{i}).time = data.(blockNames{i}).(signalNames{j}).Time;
+        end
+    end
     
-    output.FOSTWINctrl.bow.cur = datar.Data(:,3);
-    output.FOSTWINctrl.aft.cur = datar.Data(:,4);
+    output.Power.AveragePower = squeeze(output.Power.AveragePower);
+    output.ControlSignals.CaptureWidth = squeeze(output.ControlSignals.CaptureWidth);
+    output.ControlSignals.Control_Param4 = squeeze(output.ControlSignals.Control_Param4);
     
-    output.FOSTWINctrl.ctrlSig1 = datar.Data(:,5);
-    output.FOSTWINctrl.ctrlSig2 = datar.Data(:,6);
-    output.FOSTWINctrl.ctrlSig3 = datar.Data(:,7);
-    output.FOSTWINctrl.ctrlSig4 = datar.Data(:,8);
+    output.Conditions.wave.H = waveH;
+    output.Conditions.wave.T = waveT;
+    output.Conditions.wavetype = waveType;
+    output.Conditions.Ts = Ts;
     
-    output.FOSTWINctrl.wave.H = waveH;
-    output.FOSTWINctrl.wave.T = waveT;
-    % output.FOSTWINctrl.wave.type = wavetype
-    output.FOSTWINctrl.Ts = Ts;
+    
     save('simulation-data.mat','output');
 end
