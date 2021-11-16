@@ -11,19 +11,21 @@
   - [Compilation](#compilation)
   - [Control Parameters](#control-parameters)
   - [Model Upload](#model-upload)
-  - [Start/ Stop FOSTWIN](#start-stop-fostwin)
-  - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
-  - [Finished With System](#finished-with-system)
-  - [Edit Control Display](#edit-control-display)
+  - [System Control Buttons](#system-control-buttons)
+    - [Edit Control Display](#edit-control-display)
+    - [Start/ Stop FOSTWIN](#start-stop-fostwin)
+    - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
+    - [Finished With System](#finished-with-system)
 - [Developing A Controller](#developing-a-controller)
   - [Control Parameters](#control-parameters-1)
+- [Top Level Model](#top-level-model)
   
 
 
 # Getting Started
 ## Purpose
 
-In a joint effort between [SNL](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [OSU](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co/speedgoat-simulink-rt-services/), we present this open source repository and a web based platform allowing MATLAB & Simulink developers to interact with a Digital Twin of a Floating Oscillating Surge Wave Energy Device (FOSWEC).  Information about the FOSWEC device being simulated in the Digital Twins included in this repo and the web interface can be found [here](./DigitalTwins.md).
+In a joint effort between [Sandia Natinal Labs (SNL)](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [Oregon State University (OSU)](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co/speedgoat-simulink-rt-services/), we present this open source repository and a web based platform allowing MATLAB & Simulink developers to interact with a Digital Twin of a Floating Oscillating Surge Wave Energy Device (FOSWEC).  Information about the FOSWEC device being simulated in the Digital Twins included in this repo and the web interface can be found [here](./DigitalTwins.md).
 
 The web based platform aims to serve a mix of different users with varying experience and dynamics modeling skill levels, from someone who wants to get familiar with realtime Digital Twin simulations to someone who has access to the realtime Simulink toolboxes and wants to test their custom controller model but doesn't have the realtime [Speedgoat](https://www.speedgoat.com/speedgoat-solutions?utm_term=&utm_campaign=Dynamic+Ad+Groups&utm_source=adwords&utm_medium=ppc&hsa_acc=6520550235&hsa_cam=887795487&hsa_grp=43284490926&hsa_ad=208143357041&hsa_src=g&hsa_tgt=aud-387379185812:dsa-295317350131&hsa_kw=&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gclid=EAIaIQobChMIiNj__c3F8wIVBQutBh1JvQioEAAYAiAAEgJZsfD_BwE) hardware.
 
@@ -41,7 +43,7 @@ If you're up to speed with the web interface and are ready to work on developing
 
 ![](images/compilation.png)
 
-The options shown in this box are all parameters in the models that cannot be changed without recompiling the code that is executed on the speedgoat hardware.  In order to change any of these options, you must stop any running simulation, then press the "Start Compilation!" button. You will first be met with a success/ failure message that will pop up in the compilation options box, then as the project compiles the Compilation Report box directly to the right of the options will start to output information about the options selected, then information about the compilation itself. 
+The options shown in this box are all parameters in the models that cannot be changed without recompiling the code that is executed on the speedgoat hardware.  In order to change any of these options, you must stop any running simulation, then press the "Start Compilation!" button. You will first be met with a success/ failure message that will pop up in the compilation options box (pictured above), then as the project compiles the Compilation Report box directly to the right of the options will start to output information about the options selected, then information about the compilation itself. 
 
 **COMPILATION COMPLETE WILL BE RENDERED AT THE END OF THE COMPILATION REPORT INDICATING THE SYSTEM IS READY TO BE STARTED**
 
@@ -51,24 +53,27 @@ The options shown in this box are all parameters in the models that cannot be ch
 
 **WHEN "START FOSTWIN" IS PRESSED, THE INITIAL VALUES FOR THE CONTROL PARAMETER VALUES ARE TAKEN FROM THESE SLIDERS**
 
-The **Default Control** option built into the system has the ability to change the damping forces that are applied to the simulated motor torque shaft *while* the simulation is running, this is a unique benefit to running a simulation in realtime.  Try increasing or decreasing the damping, then watching the power, current, and position charts change in the UI.
+The **Default Control** option built into the system has the ability to change the damping forces that are applied to the simulated motor torque shafts *while* the simulation is running, this is a unique benefit to running a simulation in realtime. 
 
 While these values are able to be changed in realtime, when you start a simulation, these values need to be initialized to some starting value.  When you press the start simulation button, the values shown on the sliders (or spinners) are set as the starting values for the Aft and Bow Damping.  **There is absolutely no requirement to change parameters during a simulation but it's available if you want to!**
 
 You'll likely note that "Param3" and "Param4" don't have a unique name and are set to 0 by default, this is because we've built the system to allow for a custom controller to be uploaded into the system, where it could also have parameters that can be changed during the running simulation.  We currently allow for four input parameters to the controller model, again with no requirement to use them, so these "Param3" and "Param4" sliders have no effect on the Default Control model, but are there to allow for the ability to control models with more complex input parameters.  More information about the control parameters and uploading a custom controller is [here](#developing-a-controller).
 
 ## Model Upload
+![](images/upload.png)
+
+This section of the dashboard is pretty simple, if you have a custom controller you want to upload, select the file in the explorer that opens and click upload!
+
+If you want to upload a secondary model, just make sure you've either pressed the "Stop FOSTWIN" button, that you're not currently compiling any models, and you're ready to upload a new model.  **Only .slx files are allowed**
+
+**NOTE: If you don't have a model to upload, don't fret!  Use Default Control in the [Compilation Options](#compilation) box**
 
 
-## Start/ Stop FOSTWIN
+## System Control Buttons
 
+![](images/systemcontrol.png)
 
-## Prepare & Download Data (and data definitions)
-
-## Finished With System
-
-
-## Edit Control Display
+### Edit Control Display
 
 ![](images/editctrldisp.png)
 
@@ -79,6 +84,42 @@ The Param options for the rest of the dialogue box are just for setting names, r
 **The primary difference between range and spinner is a spinner sends the param when "set param" button is pressed, and the sliders set the param and send it to the speedgoat when the slider is released.**
 
 **Pressing "Update" button will refresh the page.**
+
+### Start/ Stop FOSTWIN
+
+These buttons start and stop the realtime simulation.  At the matlab prompt, they're equivalent to running `target.start` and `target.stop` where target is your simulink realtime device (Speedgoat).  
+
+Stop isn't always required, since we set a stop time in the compilation options, if the simulation runs for that duration before you press the stop button, the simulation will automatically stop.  This is mostly important for collecting your simulation data at the end of your time on the system.  If you're done with your simulation before the set stop time, then the ability to prepare and download data will fail until you've stopped the simulation.  If you're interested, this is because the realtime data logging happens on the Speedgoat hardware itself, then when a simulation is finished (either by stop time or manually stopping the simulation), the Speedgoat uses it's connection to the host pc to transfer over the logged data.  The data on the host machine is what is returned to you.
+
+### Prepare & Download Data (and data definitions)
+
+If you've ran a long simulation (> 30 minutes) please be patient!  When you click the Prepare & Download Data button, the logsout variable in the matlab workspace is re-formatted into a `.mat` file, uploaded to a custom server, then transferred to your browser to download.  Take a look at the [Top Level Model](#top-level-model) to help understand the data logging.  
+
+Data Logged:
+- Power
+  - Aft_Power - power generated on aft flap
+  - Bow_Power - power generated on bow flap
+  - Total_Power - sum of the aft and bow power
+  - Avg Power - Moving average of total power.  Moving average calculated based off wave type selected.  Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves.  
+- Conditions
+  - wave - height (H) and period (T) of the waves simulated
+  - waveType - type of wave selected
+  - Ts - time step - the rate at witch the speedgoat executes every step in the differential equation that makes up these models.  Either 1/1000 (1ms per loop or 1000hz) or 1/100 when using WECSim digital twin and Irregular (JONSWAP) wave spectrum.
+- Control Signals
+  - Aft - Position and Current (signals passed between ctrl and twin)
+  - Bow - Position and Current (signals passed between ctrl and twin)
+  - Control_Signals - 1 through 4 for the 4 custom outports of the control model (default or custom upload)
+  - Control_Params - 1 through 4 for the 4 custom inports of the control model (default or custom upload)
+
+
+Both Power and Control Signals data have one point for every timestep of the simulation, while the conditions are static values with only one entry.
+
+**PLEASE NOTE: PRESSING FINISHED BUTTON CLEARS ALL DATA FROM HOST MACHINE.  DON'T PRESS FINISHED UNTIL YOUR DATA IS DOWNLOADED IF YOU WANT TO USE IT**
+
+
+### Finished With System
+
+
 
 
 
@@ -133,6 +174,8 @@ end
 
 end
 ```
+
+# Top Level Model
 
 
 
