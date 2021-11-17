@@ -259,40 +259,86 @@ There are currently three ways to interact with the digital twin code:
 
 ### Model types
 
+<details> <summary>Click to see the details</summary>
+
 Fundamentally there are two Digital Twin models of the FOSWEC to choose from:  
 - The first is based on the open source code [WEC-Sim](https://wec-sim.github.io/WEC-Sim/master/index.html).  
 - The second is a system identification model based on experimental data collected from the actual FOSWEC device during a test campaign at OSU detailed [here](https://dx.doi.org/10.15473/1782587).  Further information from this test campaign can be found in the paper located [here](https://doi.org/10.1016/j.energy.2021.122485).
 
+</details>
+
 ### Model overview
+
+<details> <summary>Click to see the details</summary>
+
 Each version of the Digital Twin includes the plant model and a control model.  The plant model is intended to be fixed, however the control model is meant to be experimented with.  There is a default control model to get started with but it is possible for this model to be replaced with a custom control model by the user.
 
+</details>
+
 ### Wave types
+
+<details> <summary>Click to see the details</summary>
+
 Currently there are provisions for running regular and irregular wave conditions.  Irregular waves have a JONSWAP spectrum input.
+
+</details>
 
 ## Control Model
 
+<details> <summary>Click to see the details</summary>
+
 Two version of control model are given, namely a default model and a starter model.  Either the default or starter model can be modified for the users application.
+
+</details>
+
 ### Inputs and outputs
+
+<details> <summary>Click to see the details</summary>
+
 The control model has the following inputs and outputs available to the user:
 - Inputs: Flap position relative to the platform for both bow and aft flaps
 - Outputs: Current command to be sent to the motor drive for both bow and aft flaps
 
 Additionally, input control parameters can be specified by the user.  For example, the default control has damping for each flap as control parameters.
+
+</details>
+
 ### Default control model
+
+<details> <summary>Click to see the details</summary>
+
 The default control model implements basic velocity proportional damping.
 ![](/images/defaultCtrlModel.png)
+
+</details>
+
 ### Starter control model
+
+<details> <summary>Click to see the details</summary>
+
 This is a minimum starting model with a default set of inputs and outputs that serves as a starting point for control algorithm implementation.
 ![](/images/CONTROL_STARTER.png)
+
+</details>
+
 ## WEC-Sim model
+
+<details> <summary>Click to see the details</summary>
+
 The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC.  The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory.  This includes matching the water depth and mooring, which was a taut system.
 ![](/images/FOSWEC_v2.png)
+
+</details>
+
 ## System identification model
+
+<details> <summary>Click to see the details</summary>
+
 The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory.  System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system.  Input is the motor torque and output is motor position.  
 ![](/images/systemID.png)
 
 Wave input is created by taking wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
 
-
+</details>
 
 
