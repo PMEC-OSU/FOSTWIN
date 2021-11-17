@@ -7,21 +7,31 @@
   - [Purpose](#purpose)
       - [New Users](#new-users)
       - [Experienced Users](#experienced-users)
-- [Using the Web Interface](#using-the-web-interface)
-  - [Compilation](#compilation)
-  - [Control Parameters](#control-parameters)
-    - [Wave Height](#wave-height)
-  - [Model Upload](#model-upload)
-  - [System Control Buttons](#system-control-buttons)
-    - [Edit Control Display](#edit-control-display)
-    - [Start/ Stop FOSTWIN](#start-stop-fostwin)
-    - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
-    - [Finished With System](#finished-with-system)
-- [Developing A Controller](#developing-a-controller)
-  - [Control Parameters](#control-parameters-1)
-  - [Control Signals](#control-signals)
-- [Top Level Model](#top-level-model)
-  
+- [Web Interface](#web-interface)
+    - [Compilation](#compilation)
+    - [Control Parameters](#control-parameters)
+      - [Wave Height](#wave-height)
+    - [Model Upload](#model-upload)
+    - [System Control Buttons](#system-control-buttons)
+      - [Edit Control Display](#edit-control-display)
+      - [Start/ Stop FOSTWIN](#start-stop-fostwin)
+      - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
+      - [Finished With System](#finished-with-system)
+  - [Developing A Controller](#developing-a-controller)
+    - [Control Parameters](#control-parameters-1)
+    - [Control Signals](#control-signals)
+  - [Top Level Model](#top-level-model)
+- [Digital Twin Description](#digital-twin-description)
+    - [Interaction](#interaction)
+    - [Model types](#model-types)
+    - [Model overview](#model-overview)
+    - [Wave types](#wave-types)
+  - [Control Model](#control-model)
+    - [Inputs and outputs](#inputs-and-outputs)
+    - [Default control model](#default-control-model)
+    - [Starter control model](#starter-control-model)
+  - [WEC-Sim model](#wec-sim-model)
+  - [System identification model](#system-identification-model)
 
 
 # Getting Started
@@ -38,18 +48,20 @@ If you're someone who is wanting to get familiar with the idea of realtime simul
 #### Experienced Users
 
 If you're up to speed with the web interface and are ready to work on developing your own Controller model, we recommend you skip to to [Developing A Controller](#developing-a-controller) & read [this](./DigitalTwins.md) digital twin readme.  
+# Web Interface
 
-# Using the Web Interface
-
-## Compilation
+### Compilation
+<details> <summary>Click to see the details</summary>
 
 ![](images/compilation.png)
 
 The options shown in this box are all parameters in the models that cannot be changed without recompiling the code that is executed on the speedgoat hardware.  In order to change any of these options, you must stop any running simulation, then press the `Start Compilation!` button. You will first be met with a success/ failure message that will pop up in the compilation options box (pictured above), then as the project compiles the Compilation Report box directly to the right of the options will start to output information about the options selected, then information about the compilation itself. Depending on the length of simulation requested, this compilations could take as long as a few minutes.
 
 **COMPILATION COMPLETE WILL BE RENDERED AT THE END OF THE COMPILATION REPORT INDICATING THE SYSTEM IS READY TO BE STARTED**
+</details>
 
-## Control Parameters
+### Control Parameters
+<details> <summary>Click to see the details</summary>
 
 ![](images/ctrlparams.png)
 
@@ -61,7 +73,10 @@ While these values are able to be changed in realtime, when you start a simulati
 
 You'll likely note that "Param3" and "Param4" don't have a unique name and are set to 0 by default, this is because we've built the system to allow for a custom controller to be uploaded into the system, where it could also have parameters that can be changed during the running simulation.  We currently allow for four input parameters to the controller model, again with no requirement to use them, so these "Param3" and "Param4" sliders have no effect on the Default Control model, but are there to allow for the ability to control models with other input parameters (i.e. stiffness).  More information about the control parameters and uploading a custom controller is [here](#developing-a-controller).
 
-### Wave Height
+</details>
+
+#### Wave Height
+<details> <summary>Click to see the details</summary>
 
 When switching between `WECSim` and `SystemID` in the Twin Type option in the compilation options box, you'll likely note the Wave Height selector in compilation disappears and a new slider becomes un-blurred when `SystemID` is selected.  This is due to the way that the waves are pre-calculated and routed into the system when using the `SystemID` twin.  
 
@@ -70,9 +85,11 @@ When `SystemID` is the compiled twin, the wave height slider is used like the ot
 This is currently available for the `SystemID` twin only.  We plan to incorporate a similar functionality (changing wave height without re-compiling) for `WECSim` in future versions.  It is available in the `SystemID` twin because the wave excitation forces are pre-calculated (linear calculations) and we can multiply the excitation forces by the set wave height (in slider) at each step in the simulation to dynamically change the magnitude of the excitation forces sent into the digital twin.
 
 More info on the twins [here](./DigitalTwins.md)
+</details>
 
+### Model Upload
+<details> <summary>Click to see the details</summary>
 
-## Model Upload
 ![](images/upload.png)
 
 This section of the dashboard is pretty simple, if you have a custom controller you want to upload, select the file in the explorer that opens and click upload!
@@ -80,13 +97,14 @@ This section of the dashboard is pretty simple, if you have a custom controller 
 If you want to upload a second model, just make sure you've either pressed the "Stop FOSTWIN" button or that the simulation has automatically stopped due to stop time, that you're not currently compiling any models, and you're ready to upload a new model.  **Only .slx files are allowed**
 
 **NOTE: If you don't have a model to upload, don't fret!  Use Default Control in the [Compilation Options](#compilation) box**
+</details>
 
-
-## System Control Buttons
+### System Control Buttons
 
 ![](images/systemcontrol.png)
 
-### Edit Control Display
+#### Edit Control Display
+<details> <summary>Click to see the details</summary>
 
 ![](images/editctrldisp.png)
 
@@ -97,14 +115,19 @@ The Param options for the rest of the dialogue box are just for setting names, r
 **The primary difference between range and spinner is a spinner sends the param when "set param" button is pressed, and the sliders set the param and send it to the speedgoat when the slider is released.**
 
 **Pressing "Update" button will save your changes and refresh the main page.**
+</details>
 
-### Start/ Stop FOSTWIN
+#### Start/ Stop FOSTWIN
+<details> <summary>Click to see the details</summary>
 
 These buttons start and stop the realtime simulation.  At the matlab prompt, they're equivalent to running `target.start` and `target.stop` where target is your simulink realtime device (Speedgoat).  
 
 Stop isn't always required, since we set a stop time in the compilation options, if the simulation runs for that duration before you press the stop button, the simulation will automatically stop.  This is mostly important for collecting your simulation data at the end of your time on the system.  If you're done with your simulation before the set stop time, then the ability to prepare and download data will fail until you've stopped the simulation.  If you're interested, this is because the realtime data logging happens on the Speedgoat hardware itself, then when a simulation is finished (either by stop time or manually stopping the simulation), the Speedgoat uses it's connection to the host pc to transfer over the logged data.  The data on the host machine is what is returned to you.
 
-### Prepare & Download Data (and data definitions)
+</details>
+
+#### Prepare & Download Data (and data definitions)
+<details> <summary>Click to see the details</summary>
 
 If you've ran a long simulation (> 30 minutes) please be patient!  When you click the Prepare & Download Data button, the logsout variable in the matlab workspace is re-formatted into a `.mat` file, uploaded to a custom server, then transferred to your browser to download.  Take a look at the [Top Level Model](#top-level-model) to help understand the data logging.  
 
@@ -128,13 +151,21 @@ Data Logged:
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
 
-### Finished With System
+</details>
+
+
+#### Finished With System
+<details> <summary>Click to see the details</summary>
+
 This button only needs to be pressed once when you're ready to sign out of the system.  This button essentially resets things on the host machine to be ready for a next user.  
 
 **PLEASE NOTE: PRESSING THE FINISHED WITH SYSTEM BUTTON CLEARS ALL DATA FROM THE HOST MACHINE.  DON'T PRESS FINISHED UNTIL YOUR DATA IS DOWNLOADED IF YOU WANT TO SAVE IT**
 
+</details>
 
-# Developing A Controller
+
+## Developing A Controller
+<details> <summary>Click to see the details</summary>
 
 To develop a controller for the FOSTWIN digital twin, we've included a nearly blank model called `CONTROLLER_STARTER.slx`, that we highly recommend you start out with (also feel free to start with the provided `defaultCtrlModel`).  This nearly blank controller simply has the required inports and outports to allow it to be dropped into the Top Level model. Without the correct number of inports and outports (as defined in the starter model), the uploaded control model will not be able to be used through the web platform. Here's what it looks like in Simulink:
 
@@ -146,7 +177,10 @@ We've also provided a `defaultCtrlModel` that creates a simple velocity proporti
 
 ![](/images/default.PNG)
 
-## Control Parameters
+</details>
+
+### Control Parameters
+<details> <summary>Click to see the details</summary>
 
 While there is no requirement to manually change parameters within the control model (default or the one you create), the web interface allows for changing control parameters (and wave height if using systemID as the twin) while the model is being run on the [Speedgoat](https://www.speedgoat.com/speedgoat-solutions?utm_term=&utm_campaign=Dynamic+Ad+Groups&utm_source=adwords&utm_medium=ppc&hsa_acc=6520550235&hsa_cam=887795487&hsa_grp=43284490926&hsa_ad=208143357041&hsa_src=g&hsa_tgt=aud-387379185812:dsa-295317350131&hsa_kw=&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gclid=EAIaIQobChMIiNj__c3F8wIVBQutBh1JvQioEAAYAiAAEgJZsfD_BwE) in a realtime simulation, so this version of the project allows the same behavior.  Looking at the `defaultCtrlModel` may help make this more clear.  In the image from above of the `defaultCtrlModel`, note that the inports (`Control_Param1` & `Control_Param2`) are routed into a multiplication block tied to the velocity calculated from the position data from the twin.  These multiplication blocks are a replacement for a gain block that would represent the damping force applied to the motor, and we can change this damping force while a simulation is running via changing the parameter fed into the control model.
 
@@ -186,8 +220,11 @@ end
 end
 ```
 
+</details>
 
-## Control Signals 
+### Control Signals 
+
+<details> <summary>Click to see the details</summary>
 
 On the right side of the provided `defaultCtrlModel` and `CONTROL_STARTER`, you'll see that there are always 6 outports.  Two of witch are essential for the interaction between the controller and the twin - `ctrl2twin.Cur_Aft` and `ctrl2twin.Cur_Bow` (built into the starter models), and the other four being used for logging and sending data to the charts on the web interface.  
 
@@ -197,8 +234,65 @@ Just like the control parameters fed into your custom controller, if you don't h
 
 You will see a warning in the compilation if you don't connect the required outports to any wires in your controller, this doesn't mean anything is wrong, just simulink telling us that the ports are essentially unused.  
 
-# Top Level Model
+</details>
+
+## Top Level Model
 ![](images/pTopModel.png)
+
+
+
+# Digital Twin Description
+
+This section of the document outlines the FOSWEC digital twin implementations with the intent of giving a look into the operation of the code behind the models.  
+
+### Interaction
+
+<details> <summary>Click to see the details</summary>
+
+There are currently three ways to interact with the digital twin code:
+- The first is to run the model through a dashboard running in real-time on Speedgoat hardware [here](https://fostwin.evergreeninnovations.co/login).
+- The second is to download and run locally a non-realtime version of the Digital Twin located [here](https://github.com/PMEC-OSU/FOSTWIN).
+- The third is to download and run locally a realtime version of the Digital Twin located [here](https://github.com/PMEC-OSU/FOSTWIN) with Speedgoat hardware.
+
+
+</details>
+
+### Model types
+
+Fundamentally there are two Digital Twin models of the FOSWEC to choose from:  
+- The first is based on the open source code [WEC-Sim](https://wec-sim.github.io/WEC-Sim/master/index.html).  
+- The second is a system identification model based on experimental data collected from the actual FOSWEC device during a test campaign at OSU detailed [here](https://dx.doi.org/10.15473/1782587).  Further information from this test campaign can be found in the paper located [here](https://doi.org/10.1016/j.energy.2021.122485).
+
+### Model overview
+Each version of the Digital Twin includes the plant model and a control model.  The plant model is intended to be fixed, however the control model is meant to be experimented with.  There is a default control model to get started with but it is possible for this model to be replaced with a custom control model by the user.
+
+### Wave types
+Currently there are provisions for running regular and irregular wave conditions.  Irregular waves have a JONSWAP spectrum input.
+
+## Control Model
+
+Two version of control model are given, namely a default model and a starter model.  Either the default or starter model can be modified for the users application.
+### Inputs and outputs
+The control model has the following inputs and outputs available to the user:
+- Inputs: Flap position relative to the platform for both bow and aft flaps
+- Outputs: Current command to be sent to the motor drive for both bow and aft flaps
+
+Additionally, input control parameters can be specified by the user.  For example, the default control has damping for each flap as control parameters.
+### Default control model
+The default control model implements basic velocity proportional damping.
+![](/images/defaultCtrlModel.png)
+### Starter control model
+This is a minimum starting model with a default set of inputs and outputs that serves as a starting point for control algorithm implementation.
+![](/images/CONTROL_STARTER.png)
+## WEC-Sim model
+The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC.  The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory.  This includes matching the water depth and mooring, which was a taut system.
+![](/images/FOSWEC_v2.png)
+## System identification model
+The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory.  System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system.  Input is the motor torque and output is motor position.  
+![](/images/systemID.png)
+
+Wave input is created by taking wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
+
 
 
 
