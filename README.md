@@ -48,6 +48,15 @@ If you're someone who is wanting to get familiar with the idea of realtime simul
 #### Experienced Users
 
 If you're up to speed with the web interface and are ready to work on developing your own Controller model, we recommend you skip to to [Developing A Controller](#developing-a-controller) & read [this](#digital-twin-description) section of the readme.  
+
+#### Gaining access to the Web Interface
+If you are interested in using the web interface version of the FOSWEC digital twin, please email fostwin@fostwin.com to setup a time for access.
+
+#### Additional resources
+If you would like more information about the FOSWEC device please check out the following resources.
+- https://dx.doi.org/10.15473/1782587
+- https://doi.org/10.1016/j.energy.2021.122485
+
 # Web Interface
 
 ### Compilation
