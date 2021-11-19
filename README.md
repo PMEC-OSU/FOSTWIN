@@ -229,11 +229,27 @@ This section of the document outlines the FOSWEC digital twin implementations wi
 
 ### Interaction
 
+There are currently two ways to interact with the digital twin code:
+- The first is to run the model through a dashboard running in real-time on Speedgoat hardware.  To obtain access to this interface please email fostwin@fostwin.com
+- The second is to download and run locally a realtime or non-realtime version of the Digital Twin located [here](https://github.com/PMEC-OSU/FOSTWIN).  Realtime simulation requires [Speedgoat](https://www.speedgoat.com/) hardware.
 
-There are currently three ways to interact with the digital twin code:
-- The first is to run the model through a dashboard running in real-time on Speedgoat hardware [here](https://fostwin.evergreeninnovations.co/login).
-- The second is to download and run locally a non-realtime version of the Digital Twin located [here](https://github.com/PMEC-OSU/FOSTWIN).
-- The third is to download and run locally a realtime version of the Digital Twin located [here](https://github.com/PMEC-OSU/FOSTWIN) with Speedgoat hardware.
+### Running FOSTWIN locally
+
+To run the FOSTWIN digital twin locally follow the following steps
+1. Clone the FOSTWIN repository [here](https://github.com/PMEC-OSU/FOSTWIN).  
+2. Install WEC-Sim if not allready installed [here](https://github.com/WEC-Sim/WEC-Sim)
+3. Modify initModels_GUI.m in the FOSTWIN repository
+   - Change wecSimPath to reflect the source directory of your installed WEC-Sim installation
+   - Choose simulation type either 'NonRealTime' or 'SingleSpeedgoat'
+   - Set wave height and wave periods for your simulation
+   - Set initial values for inputs to your control model
+   - Set simulation stop time
+   - Set wave type of 'regular' or 'irregular' 
+   - Specify the control model name
+   - Choose either the 'WECSim' or 'systemID' TWIN model
+   - If using a speedgoat for realtime simulation set the name of your target device
+4. Run initModels_GUI.m to get started
+5. Results of the simulation are located in simulation-data.mat
 
 ### Model types
 
