@@ -252,7 +252,9 @@ To run the FOSTWIN digital twin locally follow the following steps
    - Choose either the 'WECSim' or 'systemID' TWIN model
    - If using a speedgoat for realtime simulation set the name of your target device
 4. Run initModels_GUI.m to get started
-5. Results of the simulation are located in simulation-data.mat
+   - If running on speedgoat hardware, run starttarget.m to start the simulation
+   - When simulation is completed run tofile.m to save data
+6. Results of the simulation are located in simulation-data.mat
 
 ### Model types
 
