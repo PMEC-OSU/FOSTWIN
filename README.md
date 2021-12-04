@@ -240,8 +240,10 @@ There are currently two ways to interact with the digital twin code:
 
 To run the FOSTWIN digital twin locally follow the following steps
 1. Clone the FOSTWIN repository [here](https://github.com/PMEC-OSU/FOSTWIN).  
-2. Install WEC-Sim if not allready installed [here](https://github.com/WEC-Sim/WEC-Sim)
-3. Modify initModels_GUI.m in the FOSTWIN repository
+2. Install version 4.2 of WEC-Sim if not allready installed [here](https://github.com/WEC-Sim/WEC-Sim/releases)
+   - This version of the digital twin is only compatible with version 4.2 of WEC-Sim
+   - Check back for future updates of the FOSTWIN compatible with the latest version of WEC-Sim
+4. Modify initModels_GUI.m in the FOSTWIN repository
    - Change wecSimPath to reflect the source directory of your installed WEC-Sim installation
    - Choose simulation type either 'NonRealTime' or 'SingleSpeedgoat'
    - Set wave height and wave periods for your simulation
@@ -251,7 +253,7 @@ To run the FOSTWIN digital twin locally follow the following steps
    - Specify the control model name
    - Choose either the 'WECSim' or 'systemID' TWIN model
    - If using a speedgoat for realtime simulation set the name of your target device
-4. Run initModels_GUI.m to get started
+5. Run initModels_GUI.m to get started
    - If running on speedgoat hardware, run starttarget.m to start the simulation
    - When simulation is completed run tofile.m to save data
 6. Results of the simulation are located in simulation-data.mat
