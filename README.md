@@ -60,7 +60,7 @@ A screen recording of a developer using the system will be added to this repo sh
 If you're up to speed with the web interface and are ready to work on developing your own Controller model, we recommend you skip to to [Developing A Controller](#developing-a-controller) & read [this](#digital-twin-description) section of the readme.  
 
 #### Gaining access to the Web Interface
-If you are interested in using the web interface version of the FOSWEC digital twin, please email graham@evergreeninnovations.co to setup a time for access.
+If you are interested in using the web interface version of the FOSWEC digital twin, please email graham@evergreeninnovations.co to setup a time for access.  If you don't hear back within a day or two please follow up with johannes@evergreeninnovations.co.
 
 #### Additional resources
 If you would like more information about the FOSWEC device please check out the following resources.
