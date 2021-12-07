@@ -11,6 +11,7 @@
       - [Gaining access to the Web Interface](#gaining-access-to-the-web-interface)
       - [Additional resources](#additional-resources)
 - [Web Interface](#web-interface)
+    - [Ocean Scale](#ocean-scale)
     - [Compilation](#compilation)
     - [Control Parameters](#control-parameters)
       - [Wave Height](#wave-height)
@@ -68,6 +69,12 @@ If you would like more information about the FOSWEC device please check out the 
 - https://doi.org/10.1016/j.energy.2021.122485
 
 # Web Interface
+
+### Ocean Scale
+
+**Scaling is 1:33 for WaveTank:Ocean scale**
+
+In the compilation options, you'll note that the wave height and wave period display an "Ocean Scale" value underneath the selections.  These values aren't used in the modeling, as the system is modeled at tank scale, but provide a way to set your modeling conditions up for realistic waves if your more familiar with Ocean Scale number.
 
 ### Compilation
 
