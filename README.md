@@ -2,22 +2,24 @@
 
 <img style="height:350px;margin-bottom:10px;" src="images/FOSWEC2_HWRL.png" align="right">
 
+
 - [FOSTWIN Digital Twin](#fostwin-digital-twin)
 - [Getting Started](#getting-started)
   - [Purpose](#purpose)
       - [New Users](#new-users)
       - [Experienced Users](#experienced-users)
-      - [Gaining access to the Web Interface](#Gaining-access-to-the-Web-Interface)
-      - [Additional resources](#Additional-resources)
+      - [Gaining access to the Web Interface](#gaining-access-to-the-web-interface)
+      - [Additional resources](#additional-resources)
 - [Web Interface](#web-interface)
     - [Compilation](#compilation)
     - [Control Parameters](#control-parameters)
       - [Wave Height](#wave-height)
     - [Model Upload](#model-upload)
     - [System Control Buttons](#system-control-buttons)
-      - [Edit Control Display](#edit-control-display)
+      - [Modify Control Display (**Optional**)](#modify-control-display-optional)
       - [Start/ Stop FOSTWIN](#start-stop-fostwin)
       - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
+        - [Aft vs Bow?](#aft-vs-bow)
       - [Finished With System](#finished-with-system)
   - [Developing A Controller](#developing-a-controller)
     - [Control Parameters](#control-parameters-1)
@@ -25,7 +27,7 @@
   - [Top Level Model](#top-level-model)
 - [Digital Twin Description](#digital-twin-description)
     - [Interaction](#interaction)
-    - [Running FOSTWIN locally](#Running-FOSTWIN-locally)
+    - [Running FOSTWIN locally](#running-fostwin-locally)
     - [Model types](#model-types)
     - [Model overview](#model-overview)
     - [Wave types](#wave-types)
@@ -35,6 +37,7 @@
     - [Starter control model](#starter-control-model)
   - [WEC-Sim model](#wec-sim-model)
   - [System identification model](#system-identification-model)
+
 
 
 # Getting Started
@@ -48,12 +51,16 @@ The web based platform aims to serve a mix of different users with varying exper
 
 If you're someone who is wanting to get familiar with the idea of realtime simulations, FOSWEC's, and digital twins, read the section [below](#web-interface), skip the model upload, and select **Default Control** in the compilation options box in the web UI.  We'd also recommend you read through [this](#digital-twin-description) section of the readme to get a baseline understanding about what's happening in the digital twins.
 
+If you'd prefer a tutorial walk through using the system in PDF format download and use the PDF file [here](FOSTWIN%20Beginners%20Guide.pdf).
+
+A screen recording of a developer using the system will be added to this repo shortly for anyone who prefers a video tutorial!
+
 #### Experienced Users
 
 If you're up to speed with the web interface and are ready to work on developing your own Controller model, we recommend you skip to to [Developing A Controller](#developing-a-controller) & read [this](#digital-twin-description) section of the readme.  
 
 #### Gaining access to the Web Interface
-If you are interested in using the web interface version of the FOSWEC digital twin, please email fostwin@fostwin.com to setup a time for access.
+If you are interested in using the web interface version of the FOSWEC digital twin, please email graham@evergreeninnovations.co to setup a time for access.
 
 #### Additional resources
 If you would like more information about the FOSWEC device please check out the following resources.
@@ -108,13 +115,13 @@ If you want to upload a second model, just make sure you've either pressed the "
 
 ![](images/systemcontrol.png)
 
-#### Edit Control Display
+#### Modify Control Display (**Optional**)
 
 ![](images/editctrldisp.png)
 
-Wen you click the "Edit Control Display" button, you'll be met with the options above.  The purpose here is to make the UI reflect your custom controller and input option type.  The Signal names across the top row will update the labels on the very bottom chart in the user interface.  This chart is configured to show any data set up in your uploaded control model that is sent to one of the four available outputs.  This is simply to improve your experience and can be totally skipped if you're fine with the shown names.  
+Wen you click the "Modify Control Display (**Optional**)" button, you'll be met with the options above.  The purpose here is to make the UI reflect your custom controller and input option type.  The Signal names across the top row will update the labels on the very bottom chart in the user interface.  This chart is configured to show any data set up in your uploaded control model that is sent to one of the four available outputs.  This is simply to improve your experience and can be totally skipped if you're fine with the shown names.  
 
-The Param options for the rest of the dialogue box are just for setting names, ranges, and types for the control options.  We have it pre-populated with realistic ranges and correct names if "Default Control" is selected in the compilation options.  The Type is either a range (slider) or a spinner (a numeric input with up and down arrows to increment the value).  
+The Param options for the rest of the dialogue box are just for setting names, ranges (min, max, step), and types for the control options.  We have it pre-populated with realistic ranges and correct names if "Default Control" is selected in the compilation options.  The Type is either a range (slider) or a spinner (a numeric input with up and down arrows to increment the value).  
 
 **The primary difference between range and spinner is a spinner sends the param when "set param" button is pressed, and the sliders set the param and send it to the speedgoat when the slider is released.**
 
@@ -149,6 +156,10 @@ Data Logged:
 
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
+
+##### Aft vs Bow?
+
+<img style="height:350px;margin-bottom:10px;" src="images/real-device.png" align="middle">
 
 #### Finished With System
 
