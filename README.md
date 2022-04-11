@@ -7,6 +7,7 @@
 - [Getting Started](#getting-started)
   - [Purpose](#purpose)
       - [New Users](#new-users)
+        - [Tutorials](#tutorials)
       - [Experienced Users](#experienced-users)
       - [Gaining access to the Web Interface](#gaining-access-to-the-web-interface)
       - [Additional resources](#additional-resources)
@@ -52,9 +53,10 @@ The web based platform aims to serve a mix of different users with varying exper
 
 If you're someone who is wanting to get familiar with the idea of realtime simulations, FOSWEC's, and digital twins, read the section [below](#web-interface), skip the model upload, and select **Default Control** in the compilation options box in the web UI.  We'd also recommend you read through [this](#digital-twin-description) section of the readme to get a baseline understanding about what's happening in the digital twins.
 
-If you'd prefer a tutorial walk through using the system in PDF format download and use the PDF file [here](FOSTWIN%20Beginners%20Guide.pdf).
+##### Tutorials
+A video tutorial of how to use the FOSTWIN Digital Twin web interface can be found [here](https://digitalops.sandia.gov/Mediasite/Play/5ac7786567ef4e7fa6f77b385a2781ef1d).
 
-A screen recording of a developer using the system will be added to this repo shortly for anyone who prefers a video tutorial!
+If you'd prefer a tutorial walk through using the system in PDF format download and use the PDF file [here](FOSTWIN%20Beginners%20Guide.pdf).
 
 #### Experienced Users
 
