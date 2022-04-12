@@ -13,18 +13,19 @@ clearvars; close all; clc;
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
 wecSimPath = 'C:/Software/WEC-Sim/source';
 
+
 if strcmp(wecSimPath, '')
     fprintf('Need to set the path to your WEC-Sim install at line 15 of initModels_GUI.m')
     return
 end
 
 addpath(genpath(wecSimPath));
-
+modifyWECSim_Lib_Frames
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-simulationType = 'NonRealTime';
-% simulationType = 'SingleSpeedgoat';
+% simulationType = 'NonRealTime';
+simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = .136;
@@ -52,7 +53,7 @@ twinType = 'WECSim';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
-pTgName = 'baseline1';
+pTgName = 'baseline2';
 
 if strcmp(pTgName, '')
     fprintf("Need to set your speedgoat target name in line 62");
@@ -136,7 +137,13 @@ N = 3.75;                                   % gear ratio between flap and motor
 % Calculate excitation forces (used in SystemID twin)
 switch twinType
     case 'WECSim'
-        wecSimSetup;
+%         wecSimSetup;
+        run('wecSimInputFile');
+        clear simu waves body cable pto constraint ptosim mooring 
+
+        runWecSimCML = 1;
+        run('initializeWecSim');
+        sim(simu.simMechanicsFile, [], simset('SrcWorkspace','parent'));
         % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
         [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
     case 'systemID'
@@ -215,7 +222,8 @@ switch simulationType
         data = sim(pTopModelName);
         switch twinType
             case 'WECSim'
-                wecSimPost;
+                % wecSimPost;
+                stopWecSim;    
             case 'systemID'
                 FOSTWINctrlPost;
         end

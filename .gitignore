@@ -2,3 +2,5 @@ test.txt
 simulation-data.mat
 *.asv
 .vs/
+simulation.log
+*.r2021a
