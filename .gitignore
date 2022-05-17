@@ -1,3 +1,5 @@
 test.txt
 simulation-data.mat
 *.asv
+*.slxc
+slprj/
