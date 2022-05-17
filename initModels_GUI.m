@@ -2,6 +2,8 @@
 % Twin and Controller systems
 clearvars; close all; clc;
 
+
+
 % uncomment following line if wanting random waves with systemID
 % and wanting to have the same waves for multiple runs (seed random
 % generator with same number)
@@ -20,7 +22,8 @@ if strcmp(wecSimPath, '')
 end
 
 addpath(genpath(wecSimPath));
-modifyWECSim_Lib_Frames
+% modifyWECSim_Lib_Frames  %% this needs to be run once when WEC-Sim is
+% updated
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
@@ -38,7 +41,7 @@ stopTime = '60'; % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
-
+simu.paraview.option = 0;
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
 waveType = 'regular';
 % waveType = 'irregular';
@@ -53,7 +56,7 @@ twinType = 'WECSim';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
-pTgName = 'baseline2';
+pTgName = 'baseline1';
 
 if strcmp(pTgName, '')
     fprintf("Need to set your speedgoat target name in line 62");
@@ -63,7 +66,7 @@ end
 if strcmp(twinType, 'WECSim')
     switch waveType
         case 'regular'
-            Ts = 1/1000;
+            Ts = 1/100;
         case 'irregular'
             Ts = 1/100;    % slower for the JONSWAP - avoid overflow
         otherwise
