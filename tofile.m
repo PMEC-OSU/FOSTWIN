@@ -3,7 +3,7 @@
 
 % ONLY NEEDED WHEN RUNNING THE CTRL IN REALTIME MODE ON A SPEEGOAT
 if exist('logsout','var')
-    data1 = logsout.FileLogSignals;
+    data1 = logsout;
     numdatasets = numElements(data1);
     
     for i = 1:numdatasets
@@ -14,18 +14,27 @@ if exist('logsout','var')
             pat = asManyOfPattern(level);
             blockName = extractAfter(blockNameTot,pat);
             signalName = char(signalNames(j));
-            output.(blockName).(signalName) = data1{i}.Values.(signalName).Data;
-            output.(blockName).time = data1{i}.Values.(signalName).Time;
+            outputSimulation.(blockName).(signalName) = data1{i}.Values.(signalName).Data;
+            outputSimulation.(blockName).time = data1{i}.Values.(signalName).Time;
         end
     end
     
-output.Power.AveragePower = squeeze(output.Power.AveragePower);
-output.ControlSignals.CaptureWidth = squeeze(output.ControlSignals.CaptureWidth);
-output.ControlSignals.Control_Param4 = squeeze(output.ControlSignals.Control_Param4);
-
-        output.Conditions.wave.H = waveH;
-        output.Conditions.wave.T = waveT;
-        output.Conditions.wavetype = waveType;
-        output.Conditions.Ts = Ts;
-    save('simulation-data.mat','output');
+    outputSimulation.Power.AveragePower = squeeze(outputSimulation.Power.AveragePower);
+    outputSimulation.ControlSignals.CaptureWidth = squeeze(outputSimulation.ControlSignals.CaptureWidth);
+    outputSimulation.ControlSignals.Control_Param1 = squeeze(outputSimulation.ControlSignals.Control_Param1);
+    outputSimulation.ControlSignals.Control_Param2 = squeeze(outputSimulation.ControlSignals.Control_Param2);
+    outputSimulation.ControlSignals.Control_Param3 = squeeze(outputSimulation.ControlSignals.Control_Param3);
+    outputSimulation.ControlSignals.Control_Param4 = squeeze(outputSimulation.ControlSignals.Control_Param4);
+    outputSimulation.ControlSignals.waveH_rt = squeeze(outputSimulation.ControlSignals.waveH_rt);
+    outputSimulation.Conditions.wave.H = waveH;
+    outputSimulation.Conditions.wave.T = waveT;
+    outputSimulation.Conditions.wavetype = waveType;
+    outputSimulation.Conditions.Ts = Ts;
+if strcmp(twinType, 'WECSim')
+    % add get WECSim post-processed data
+    stopWecSim;
+    % add WECSim post-processed data to the output that is stored
+    outputSimulation.WECSim = output;
+end
+    save('simulation-data.mat','outputSimulation');
 end

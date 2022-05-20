@@ -5,3 +5,4 @@ simulation-data.mat
 simulation.log
 *.r2021a
 temp/
+output/
