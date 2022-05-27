@@ -36,7 +36,7 @@ switch waveType
             waves.height = waveH; % get values set into workspace from python server
             waves.period = waveT;
             waves.spectrumType = 'JS'; %jonswap
-            waves.freqDisc = 'EqualEnergy';
+            waves.bem.option = 'EqualEnergy';
             waves.phaseSeed = 1;
         catch ME
              fprintf('\n*** Error setting wave parameters from workspace, using defaults. \n')
@@ -44,7 +44,7 @@ switch waveType
              waves.height = 0.136;                          % Wave Height [m]
              waves.period = 2.61;   % Wave Period [s]
              waves.spectrumType = 'JS'; %jonswap
-             waves.freqDisc = 'EqualEnergy';
+             waves.bem.option = 'EqualEnergy';
              waves.phaseSeed = 1;
         end
         

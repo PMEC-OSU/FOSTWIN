@@ -43,8 +43,8 @@ N_IN = 6;
 N_OUT = 6;
 simu.paraview.option = 0;
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
-waveType = 'regular';
-% waveType = 'irregular';
+% waveType = 'regular';
+waveType = 'irregular';
 
 % SWITCH COMMENT FOR CONTROLLER
 ctrlModelName = 'defaultCtrlModel';
