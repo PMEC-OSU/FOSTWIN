@@ -2,18 +2,16 @@
 % Twin and Controller systems
 clearvars; close all; clc;
 
-
-
 % uncomment following line if wanting random waves with systemID
 % and wanting to have the same waves for multiple runs (seed random
 % generator with same number)
-% rng('default')
+rng('default')
 
 % Example wecSimPath variable - use full path
-% wecSimPath = 'D:\src\WEC-Sim\source';
+wecSimPath = 'D:\src\wec-sim-5.0\source';
 
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
-wecSimPath = 'C:/Software/WEC-Sim/source';
+%wecSimPath = 'C:/Software/WEC-Sim/source';
 
 
 if strcmp(wecSimPath, '')
@@ -27,17 +25,17 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-% simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
-waveH = .136;
+waveH = 0.136;
 waveT = 2.61;
-param1 = 2.5; % AFT DAMPING - IN DEFAULT CONTROL
-param2 = 2.5; % BOW DAMPING - IN DEAULT CONTROL
+param1 = 2.5; % BOW DAMPING - IN DEFAULT CONTROL
+param2 = 2.5; % AFT DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '60'; % seconds
+stopTime = '1800';  % seconds
 % number of required in and out ports in new controller model
 N_IN = 6;
 N_OUT = 6;
@@ -52,7 +50,7 @@ ctrlModelName = 'defaultCtrlModel';
 
 % SWITCH COMMENT FOR TWIN
 twinType = 'WECSim';
-% twinType = 'systemID';
+%twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
@@ -74,7 +72,7 @@ if strcmp(twinType, 'WECSim')
             return
     end
 else
-    Ts = 1/1000;
+    Ts = 1/100;
 end
 
 
@@ -148,9 +146,9 @@ switch twinType
         run('initializeWecSim');
         sim(simu.simMechanicsFile, [], simset('SrcWorkspace','parent'));
         % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
-        [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
+        [FexAft, FexBow, wave, admittance_ss, Ef] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
     case 'systemID'
-        [Fexin, FexAft, FexBow, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
+        [FexAft, FexBow, wave, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
 %% === Setting up the model parameters ====================================

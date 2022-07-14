@@ -38,6 +38,7 @@ switch waveType
             waves.spectrumType = 'JS'; %jonswap
             waves.bem.option = 'EqualEnergy';
             waves.phaseSeed = 1;
+            waves.gamma = 3.3;
         catch ME
              fprintf('\n*** Error setting wave parameters from workspace, using defaults. \n')
              fprintf('\n*** Matlab error \n %s \n\n',ME.getReport)
@@ -71,8 +72,8 @@ body(1).geometryFile = 'geometry/flap.stl';
 body(1).mass = 23.14;                       %[kg] from Exp
 body(1).inertia = [1.42 1.19 1.99];    %[kg-m^2] from Exp
 % pitch
-body(1).linearDamping(5) = 4.7141;      % from forced oscillation
-body(1).quadDrag.drag(5,5) = 21.3757;  	% from forced oscillation
+body(1).linearDamping(5,5) = 4.7; %4.7141;      % from forced oscillation
+body(1).quadDrag.drag(5,5) = 5; %21.3757;  	% from forced oscillation
 
 %% Body 2: Platform (Base)
 body(2) = bodyClass('hydroData/foswec.h5');
@@ -97,8 +98,8 @@ body(3).geometryFile = 'geometry/flap.stl';
 body(3).mass = 23.14;                       %[kg] from Exp
 body(3).inertia = [1.42 1.19 1.99];    %[kg-m^2] from Exp
 % pitch
-body(3).linearDamping(5) = 4.7141;      % from forced oscillation
-body(3).quadDrag.drag(5,5) = 21.3757;	% from forced oscillation
+body(3).linearDamping(5,5) = 4.7;% 4.7141;      % from forced oscillation
+body(3).quadDrag.drag(5,5) = 5;% 21.3757;	% from forced oscillation
 
 
 %% Body 4: Mooring Non-hydro Body (Mooring Line 1)
