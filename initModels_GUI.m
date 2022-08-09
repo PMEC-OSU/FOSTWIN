@@ -50,8 +50,8 @@ ctrlModelName = 'defaultCtrlModel';
 %ctrlModelName = 'ctrlStarter'; 
 
 % SWITCH COMMENT FOR TWIN
-twinType = 'WECSim';
-%twinType = 'systemID';
+%twinType = 'WECSim';
+twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
@@ -141,6 +141,7 @@ twin2CtrlBus = eval(twin2CtrlBusInfo.busName);
 
 ctrl2TwinStruct.curAft = 0.0;
 ctrl2TwinStruct.curBow = 0.0;
+ctrl2TwinStruct.state = int32(0);
 
 ctrl2TwinBusInfo = Simulink.Bus.createObject(ctrl2TwinStruct);
 ctrl2TwinBus = eval(ctrl2TwinBusInfo.busName);
