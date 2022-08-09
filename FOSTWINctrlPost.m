@@ -11,15 +11,17 @@ if exist('data','var')
         end
     end
     
-    output.Power.AveragePower = squeeze(output.Power.AveragePower);
+    output.Power.powerMechAverage = squeeze(output.Power.powerMechAverage);
     output.ControlSignals.CaptureWidth = squeeze(output.ControlSignals.CaptureWidth);
-    output.ControlSignals.Control_Param4 = squeeze(output.ControlSignals.Control_Param4);
+    output.ControlSignals.ctrlParam1 = squeeze(output.ControlSignals.ctrlParam1);
+    output.ControlSignals.ctrlParam2 = squeeze(output.ControlSignals.ctrlParam2);
+    output.ControlSignals.ctrlParam3 = squeeze(output.ControlSignals.ctrlParam3);
+    output.ControlSignals.ctrlParam4 = squeeze(output.ControlSignals.ctrlParam4);
     
     output.Conditions.wave.H = waveH;
     output.Conditions.wave.T = waveT;
     output.Conditions.wavetype = waveType;
     output.Conditions.Ts = Ts;
-    
     
     save('simulation-data.mat','output');
 end

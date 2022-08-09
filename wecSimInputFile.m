@@ -72,7 +72,7 @@ body(1).geometryFile = 'geometry/flap.stl';
 body(1).mass = 23.14;                       %[kg] from Exp
 body(1).inertia = [1.42 1.19 1.99];    %[kg-m^2] from Exp
 % pitch
-body(1).linearDamping(5,5) = 4.7; %4.7141;      % from forced oscillation
+body(1).linearDamping(5,5) = 4.7141;      % from forced oscillation
 body(1).quadDrag.drag(5,5) = 5; %21.3757;  	% from forced oscillation
 
 %% Body 2: Platform (Base)
@@ -98,7 +98,7 @@ body(3).geometryFile = 'geometry/flap.stl';
 body(3).mass = 23.14;                       %[kg] from Exp
 body(3).inertia = [1.42 1.19 1.99];    %[kg-m^2] from Exp
 % pitch
-body(3).linearDamping(5,5) = 4.7;% 4.7141;      % from forced oscillation
+body(3).linearDamping(5,5) = 4.7141;      % from forced oscillation
 body(3).quadDrag.drag(5,5) = 5;% 21.3757;	% from forced oscillation
 
 
