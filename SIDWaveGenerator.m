@@ -63,7 +63,7 @@ if strcmp(wavetype,'irregular')
 
     % generate spectrum with random phases
     phi = 2*pi*rand(size(S)); % random phases
-    A = sqrt(2*S*df); %NOT complex A - phase is dealt with further below .*exp(1i*phi); % complex A
+    A = sqrt(2*S*df); %NOT complex A - phase is dealt with further below .*exp(1i*phi);
     
     % interpolate wamit results to fit spectral frequency
     wamitExAft = interp1(wamit.w,wamit.FexAftPitch,w,'spline','extrap');
@@ -73,7 +73,7 @@ if strcmp(wavetype,'irregular')
     FexAft_w = A .* wamitExAft;
     FexBow_w = A .* wamitExBow;
 
-    t = 0:TsTwin:duration; % around 100 hz for tsTwin
+    t = 0:TsTwin:duration; % time vector
 
     % Note: WecSim uses Re*cos(x) - Im*sin(x), which corresponds to
     % real(A*exp(-ix))
@@ -139,12 +139,13 @@ elseif strcmp(wavetype,'regular')
     FexAft = FexAft .* r_win;
     FexBow = FexBow .* r_win;
     
+    % TODO - Bret, are these timeseries used for anything?
     FexcAft = timeseries(FexAft,t);
     FexcBow = timeseries(FexBow,t);
     
     Fexc.Aft = timeseries(FexAft,t);
     Fexc.Bow = timeseries(FexBow,t);
-    busInfo = Simulink.Bus.createObject(Fexc);
+    busInfo = Simulink.Bus.createObject(Fexc); %
     
     Fexin = Simulink.SimulationData.Dataset;
     Fexin = Fexin.addElement(Fexc.Aft,'FexAft');
