@@ -192,7 +192,7 @@ Simulink.defineIntEnumType('fostwinStateEnum', ...
 
 
 %% === definition of constants ============================================
-Kt = 0.882355004501468;                     % motor torque constant in Nm/A
+Kt = 0.943;                     % motor torque constant in Nm/A
 N = 3.75;                                   % gear ratio between flap and motor
 Rpn = 0.5275;                               % motor winding resistance phase-neutral
 lpFreqCurrent = 200;                        % cut-off frequency for first order low pass applied to current (only for fault state transition checking, not in feedback path)
