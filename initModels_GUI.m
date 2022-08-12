@@ -8,7 +8,8 @@ clearvars; close all; clc;
 rng('default')
 
 % Example wecSimPath variable - use full path
-wecSimPath = 'D:\src\wec-sim-5.0\source';
+% wecSimPath = 'D:\src\wec-sim-5.0\source';
+wecSimPath = 'D:\src\WEC-Sim\source';
 
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
 %wecSimPath = 'C:/Software/WEC-Sim/source';
@@ -58,7 +59,7 @@ twinType = 'systemID';
 pTgName = 'baseline1';
 
 if strcmp(pTgName, '')
-    fprintf("Need to set your speedgoat target name in line 61");
+    fprintf("Need to set your speedgoat target name in line 59");
     return
 end
 
