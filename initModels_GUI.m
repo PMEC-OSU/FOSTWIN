@@ -58,7 +58,7 @@ twinType = 'systemID';
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
 % pTgName = 'baseline1';
-pTgName = 'EGIBaseline';
+pTgName = 'EGIBaseline2';
 
 if strcmp(pTgName, '')
     fprintf("Need to set your speedgoat target name in line 59");
@@ -278,7 +278,7 @@ set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
 pTopActiveConfig = getActiveConfigSet(pTopModelName);
-fexInportsConfig = getActiveConfigSet(fexInportsModelName);
+%fexInportsConfig = getActiveConfigSet(fexInportsModelName);
 
 
 set_param(twinActiveConfig,'StopTime',stopTime);
@@ -341,7 +341,7 @@ switch simulationType
         
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
-        set_param(fexInportsConfig, 'SolverType', 'Fixed-step', 'FixedStep', 'Ts');
+%        set_param(fexInportsConfig, 'SolverType', 'Fixed-step', 'FixedStep', 'Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         
         
