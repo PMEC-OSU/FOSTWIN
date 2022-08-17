@@ -26,8 +26,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-simulationType = 'NonRealTime';
-% simulationType = 'SingleSpeedgoat';
+% simulationType = 'NonRealTime';
+simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
@@ -48,7 +48,7 @@ waveType = 'irregular';
 
 % SWITCH COMMENT FOR CONTROLLER
 ctrlModelName = 'defaultCtrlModel';
-%ctrlModelName = 'ctrlStarter'; 
+% ctrlModelName = 'ctrlStarter'; 
 
 % SWITCH COMMENT FOR TWIN
 %twinType = 'WECSim';
@@ -211,6 +211,8 @@ maxFaultCount = 3;                          % maximum number of ctrlNormal -> ct
 % =========================================================================
 
 % Calculate excitation forces (used in SystemID twin)
+% TODO - regular waves don't currenty work - regular doesn't return the
+% wave argument
 switch twinType
     case 'WECSim'
 %         wecSimSetup;
@@ -256,6 +258,12 @@ if in < N_IN || out < N_OUT
     return
 end
 
+% make sure the variant sub-system for udp send/recieve and fileLogging is
+% set to local - NO UDP
+set_param([pTopModelName, '/params'], 'OverrideUsingVariant', 'Local');
+set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
+
+
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
 pTopActiveConfig = getActiveConfigSet(pTopModelName);
@@ -270,8 +278,17 @@ switch simulationType
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
-        
-        set_param([pTopModelName,'/ctrl'],'ModelName',ctrlModelName)
+        % handle different user - developed control names
+        switch ctrlModelName
+            case "defaultCtrlModel"
+                set_param([pTopModelName, '/ctrl'], 'OverrideUsingVariant', ctrlModelName);
+            otherwise
+                % if other name - set that as the model name loaded into
+                % variant subsystem - under the userCtrlModel subsystem
+                set_param([pTopModelName,'/ctrl/userCtrlModel'],'ModelName',ctrlModelName);
+                set_param([pTopModelName, '/ctrl'], 'OverrideUsingVariant', 'userCtrlModel');
+        end
+   
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','nonRT');
         set_param([pTopModelName,'/feedbackComs'],'OverrideUsingVariant','nonRT');
         % set the twin
@@ -288,7 +305,8 @@ switch simulationType
         % save is what causes the refresh box
         Simulink.ModelReference.refresh('FOSTWIN/twin/WECSim'); % fix the refresh dialogue box
         Simulink.ModelReference.refresh('FOSTWIN/twin/systemID'); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh('FOSTWIN/ctrl'); % fix the refresh dialogue box box
+        Simulink.ModelReference.refresh('FOSTWIN/ctrl/userCtrlModel'); % fix the refresh dialogue box box
+        Simulink.ModelReference.refresh('FOSTWIN/ctrl/defaultCtrlModel'); % fix the refresh dialogue box box
         
         save_system(pTopModelName)
         
@@ -308,7 +326,17 @@ switch simulationType
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         
-        set_param([pTopModelName,'/ctrl'],'ModelName',ctrlModelName)
+       % handle different user - developed control names
+        switch ctrlModelName
+            case "defaultCtrlModel"
+                set_param([pTopModelName, '/ctrl'], 'OverrideUsingVariant', ctrlModelName);
+            otherwise
+                % if other name - set that as the model name loaded into
+                % variant subsystem - under the userCtrlModel subsystem
+                set_param([pTopModelName,'/ctrl/userCtrlModel'],'ModelName',ctrlModelName);
+                set_param([pTopModelName, '/ctrl'], 'OverrideUsingVariant', 'userCtrlModel');
+        end
+
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','singleSpeedgoat');
         set_param([pTopModelName,'/feedbackComs'],'OverrideUsingVariant','singleSpeedgoat');
         
@@ -326,11 +354,12 @@ switch simulationType
         % save is what causes the refresh box
         Simulink.ModelReference.refresh([pTopModelName,'/twin/WECSim']); % fix the refresh dialogue box
         Simulink.ModelReference.refresh([pTopModelName,'/twin/systemID']); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh([pTopModelName,'/ctrl']); % fix the refresh dialogue box
+        Simulink.ModelReference.refresh([pTopModelName, '/ctrl/userCtrlModel']); % fix the refresh dialogue box box
+        Simulink.ModelReference.refresh([pTopModelName, '/ctrl/defaultCtrlModel']); % fix the refresh dialogue box box
         
         save_system(pTopModelName)
         
-        set_param(pTopModelName, 'RTWVerbose', 'off');
+        set_param(pTopModelName, 'RTWVerbose', 'on');
         fprintf('*** Build Simulink RT code (Single Speedgoat) ...\n\n')
         
         try

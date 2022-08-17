@@ -159,7 +159,8 @@ elseif strcmp(wavetype,'regular')
     w = 2*pi/waveT;
     Ef = rho*g^2*D*A^2/(4*w);  % Energy flux in W/m
 %     Ef = Ef.*waveH^2;
-
+    wave.A = A;
+    wave.w = w;
 
 end
 
