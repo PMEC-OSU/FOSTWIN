@@ -50,13 +50,15 @@ waveType = 'irregular';
 ctrlModelName = 'defaultCtrlModel';
 % ctrlModelName = 'ctrlStarter'; 
 
+fexInportsModelName = 'fexInports';
 % SWITCH COMMENT FOR TWIN
 %twinType = 'WECSim';
 twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
-pTgName = 'baseline1';
+% pTgName = 'baseline1';
+pTgName = 'EGIBaseline';
 
 if strcmp(pTgName, '')
     fprintf("Need to set your speedgoat target name in line 59");
@@ -74,7 +76,7 @@ if strcmp(twinType, 'WECSim')
             return
     end
 else
-    Ts = 1/1000;
+    Ts = 1/500; % slow down for SystemID too??
 end
 
 
@@ -97,7 +99,7 @@ switch simulationType
         end
         
     case 'SingleSpeedgoat'
-        pTopModelName = 'pTopModel';
+        pTopModelName = 'FOSTWIN';
         switch waveType
             case "regular"
                 numPeriods = 5;
@@ -228,10 +230,19 @@ switch twinType
         [FexAft, FexBow, wave, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
+% test for constant inputs
+FexAftTime = FexAft.Time;
+FexAftData = squeeze(FexAft.Data);
+
+FexBowtime = FexBow.Time;
+FexBowData = squeeze(FexAft.Data);
+
 %% === Setting up the model parameters ====================================
 load_system(twinModelName)
 
 load_system(ctrlModelName)
+
+% load_system(fexInportsModelName)
 
 load_system(pTopModelName)
 
@@ -267,10 +278,16 @@ set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
 pTopActiveConfig = getActiveConfigSet(pTopModelName);
+fexInportsConfig = getActiveConfigSet(fexInportsModelName);
+
 
 set_param(twinActiveConfig,'StopTime',stopTime);
 set_param(ctrlActiveConfig,'StopTime',stopTime);
 set_param(pTopActiveConfig,'StopTime',stopTime);
+% set_param(fexInportsConfig, 'StopTime',stopTime);
+% changes lines and commented blocks based off simulation type
+% allows for root level inports for excitation forces in realtime model
+% switchInports;
 
 switch simulationType
     
@@ -324,7 +341,9 @@ switch simulationType
         
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        set_param(fexInportsConfig, 'SolverType', 'Fixed-step', 'FixedStep', 'Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        
         
        % handle different user - developed control names
         switch ctrlModelName
@@ -345,27 +364,31 @@ switch simulationType
         
         switchTarget(twinActiveConfig,solverRT,[]);
         switchTarget(ctrlActiveConfig,solverRT,[]);
+%         switchTarget(fexInportsConfig,solverRT, []);
         switchTarget(pTopActiveConfig,solverRT,[]);
         
         % the order matters - save the top model last
         save_system(twinModelName)
         save_system(ctrlModelName)
+%         save_system(fexInportsModelName)
         
         % save is what causes the refresh box
         Simulink.ModelReference.refresh([pTopModelName,'/twin/WECSim']); % fix the refresh dialogue box
         Simulink.ModelReference.refresh([pTopModelName,'/twin/systemID']); % fix the refresh dialogue box
-        Simulink.ModelReference.refresh([pTopModelName, '/ctrl/userCtrlModel']); % fix the refresh dialogue box box
-        Simulink.ModelReference.refresh([pTopModelName, '/ctrl/defaultCtrlModel']); % fix the refresh dialogue box box
-        
+        Simulink.ModelReference.refresh([pTopModelName, '/ctrl/userCtrlModel']); % fix the refresh dialogue box 
+        Simulink.ModelReference.refresh([pTopModelName, '/ctrl/defaultCtrlModel']); % fix the refresh dialogue box
+%         Simulink.ModelReference.refresh([pTopModelName, '/FexRealtime']); % fix the refresh dialogue box
         save_system(pTopModelName)
         
-        set_param(pTopModelName, 'RTWVerbose', 'on');
+        set_param(pTopModelName, 'RTWVerbose', 'off');
         fprintf('*** Build Simulink RT code (Single Speedgoat) ...\n\n')
         
         try
             slbuild(pTopModelName);
-            app_object = slrealtime.Application(pTopModelName);
-            updateRootLevelInportData(app_object);
+%             app_object = slrealtime.Application(pTopModelName);
+%             updateRootLevelInportData(app_object);
+%             app_object = slrealtime.Application(fexInportsModelName);
+%             updateRootLevelInportData(app_object);
         catch e
             if isa(e,'MSLException')
                 fprintf('Error building model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)

@@ -19,17 +19,17 @@ switch simulationType
                 end
             end
 
-            output.Power.powerMechAverage = squeeze(output.Power.powerMechAverage);
-            output.ControlSignals.CaptureWidth = squeeze(output.ControlSignals.CaptureWidth);
-            output.ControlSignals.ctrlParam1 = squeeze(output.ControlSignals.ctrlParam1);
-            output.ControlSignals.ctrlParam2 = squeeze(output.ControlSignals.ctrlParam2);
-            output.ControlSignals.ctrlParam3 = squeeze(output.ControlSignals.ctrlParam3);
-            output.ControlSignals.ctrlParam4 = squeeze(output.ControlSignals.ctrlParam4);
+            outputSimulation.Power.powerMechAverage = squeeze(outputSimulation.Power.powerMechAverage);
+            outputSimulation.ControlSignals.CaptureWidth = squeeze(outputSimulation.ControlSignals.CaptureWidth);
+            outputSimulation.ControlSignals.ctrlParam1 = squeeze(outputSimulation.ControlSignals.ctrlParam1);
+            outputSimulation.ControlSignals.ctrlParam2 = squeeze(outputSimulation.ControlSignals.ctrlParam2);
+            outputSimulation.ControlSignals.ctrlParam3 = squeeze(outputSimulation.ControlSignals.ctrlParam3);
+            outputSimulation.ControlSignals.ctrlParam4 = squeeze(outputSimulation.ControlSignals.ctrlParam4);
             
-            output.Conditions.wave.H = waveH;
-            output.Conditions.wave.T = waveT;
-            output.Conditions.wavetype = waveType;
-            output.Conditions.Ts = Ts;
+            outputSimulation.Conditions.wave.H = waveH;
+            outputSimulation.Conditions.wave.T = waveT;
+            outputSimulation.Conditions.wavetype = waveType;
+            outputSimulation.Conditions.Ts = Ts;
 % 
 % 
 % 

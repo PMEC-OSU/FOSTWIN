@@ -143,13 +143,13 @@ elseif strcmp(wavetype,'regular')
     FexcAft = timeseries(FexAft,t);
     FexcBow = timeseries(FexBow,t);
     
-    Fexc.Aft = timeseries(FexAft,t);
-    Fexc.Bow = timeseries(FexBow,t);
-    busInfo = Simulink.Bus.createObject(Fexc); %
-    
-    Fexin = Simulink.SimulationData.Dataset;
-    Fexin = Fexin.addElement(Fexc.Aft,'FexAft');
-    Fexin = Fexin.addElement(Fexc.Bow,'FexBow');
+%     Fexc.Aft = timeseries(FexAft,t);
+%     Fexc.Bow = timeseries(FexBow,t);
+%     busInfo = Simulink.Bus.createObject(Fexc); %
+%     
+%     Fexin = Simulink.SimulationData.Dataset;
+%     Fexin = Fexin.addElement(Fexc.Aft,'FexAft');
+%     Fexin = Fexin.addElement(Fexc.Bow,'FexBow');
     
     %% calculate wave energy flux from Falnes pg 78
     [L,~,~] = dispersion(h,waveT);
