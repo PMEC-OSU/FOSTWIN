@@ -26,8 +26,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-% simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
@@ -36,7 +36,7 @@ param1 = 0.5; % AFT DAMPING - IN DEFAULT CONTROL - TODO -ensure this order match
 param2 = 0.5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '180';  % seconds
+stopTime = '10';  % seconds
 % number of required in and out ports in new controller model 
 N_IN = 2;
 N_OUT = 2;
@@ -76,7 +76,7 @@ if strcmp(twinType, 'WECSim')
             return
     end
 else
-    Ts = 1/500; % slow down for SystemID too??
+    Ts = 1/1000; % slow down for SystemID too??
 end
 
 
@@ -230,11 +230,11 @@ switch twinType
         [FexAft, FexBow, wave, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
-% test for constant inputs
+% for inputs to workspace
 FexAftTime = FexAft.Time;
 FexAftData = squeeze(FexAft.Data);
 
-FexBowtime = FexBow.Time;
+FexBowTime = FexBow.Time;
 FexBowData = squeeze(FexAft.Data);
 
 %% === Setting up the model parameters ====================================
@@ -273,7 +273,7 @@ end
 % set to local - NO UDP
 set_param([pTopModelName, '/params'], 'OverrideUsingVariant', 'Local');
 set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
-
+ 
 
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
@@ -284,10 +284,7 @@ pTopActiveConfig = getActiveConfigSet(pTopModelName);
 set_param(twinActiveConfig,'StopTime',stopTime);
 set_param(ctrlActiveConfig,'StopTime',stopTime);
 set_param(pTopActiveConfig,'StopTime',stopTime);
-% set_param(fexInportsConfig, 'StopTime',stopTime);
-% changes lines and commented blocks based off simulation type
-% allows for root level inports for excitation forces in realtime model
-% switchInports;
+
 
 switch simulationType
     
@@ -364,20 +361,18 @@ switch simulationType
         
         switchTarget(twinActiveConfig,solverRT,[]);
         switchTarget(ctrlActiveConfig,solverRT,[]);
-%         switchTarget(fexInportsConfig,solverRT, []);
         switchTarget(pTopActiveConfig,solverRT,[]);
         
         % the order matters - save the top model last
         save_system(twinModelName)
         save_system(ctrlModelName)
-%         save_system(fexInportsModelName)
         
         % save is what causes the refresh box
         Simulink.ModelReference.refresh([pTopModelName,'/twin/WECSim']); % fix the refresh dialogue box
         Simulink.ModelReference.refresh([pTopModelName,'/twin/systemID']); % fix the refresh dialogue box
         Simulink.ModelReference.refresh([pTopModelName, '/ctrl/userCtrlModel']); % fix the refresh dialogue box 
         Simulink.ModelReference.refresh([pTopModelName, '/ctrl/defaultCtrlModel']); % fix the refresh dialogue box
-%         Simulink.ModelReference.refresh([pTopModelName, '/FexRealtime']); % fix the refresh dialogue box
+
         save_system(pTopModelName)
         
         set_param(pTopModelName, 'RTWVerbose', 'off');
@@ -387,8 +382,7 @@ switch simulationType
             slbuild(pTopModelName);
 %             app_object = slrealtime.Application(pTopModelName);
 %             updateRootLevelInportData(app_object);
-%             app_object = slrealtime.Application(fexInportsModelName);
-%             updateRootLevelInportData(app_object);
+
         catch e
             if isa(e,'MSLException')
                 fprintf('Error building model:\n  Identifier: %s \n  Message: %s\n  Report: %s\n', e.identifier, e.message, e.getReport)

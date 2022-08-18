@@ -30,21 +30,10 @@ switch simulationType
             outputSimulation.Conditions.wave.T = waveT;
             outputSimulation.Conditions.wavetype = waveType;
             outputSimulation.Conditions.Ts = Ts;
-% 
-% 
-% 
-%             outputSimulation.Power.AveragePower = squeeze(outputSimulation.Power.AveragePower);
-%             outputSimulation.ControlSignals.CaptureWidth = squeeze(outputSimulation.ControlSignals.CaptureWidth);
-%             outputSimulation.ControlSignals.Control_Param1 = squeeze(outputSimulation.ControlSignals.Control_Param1);
-%             outputSimulation.ControlSignals.Control_Param2 = squeeze(outputSimulation.ControlSignals.Control_Param2);
-%             outputSimulation.ControlSignals.Control_Param3 = squeeze(outputSimulation.ControlSignals.Control_Param3);
-%             outputSimulation.ControlSignals.Control_Param4 = squeeze(outputSimulation.ControlSignals.Control_Param4);
-%             outputSimulation.ControlSignals.waveH_rt = squeeze(outputSimulation.ControlSignals.waveH_rt);
-%             
-%             outputSimulation.Conditions.wave.H = waveH;
-%             outputSimulation.Conditions.wave.T = waveT;
-%             outputSimulation.Conditions.wavetype = waveType;
-%             outputSimulation.Conditions.Ts = Ts;
+            outputSimulation.Conditions.simulationType = simulationType;
+
+            % TODO - when wecsim is working again - make sure post process
+            % works 
             if strcmp(twinType, 'WECSim')
                 % add get WECSim post-processed data
                 stopWecSim;
@@ -78,6 +67,7 @@ switch simulationType
             output.Conditions.wave.T = waveT;
             output.Conditions.wavetype = waveType;
             output.Conditions.Ts = Ts;
+            output.Conditions.simulationType = simulationType;
             
             save('simulation-data.mat','output');
         end
