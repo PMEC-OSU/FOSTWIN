@@ -36,7 +36,7 @@ param1 = 0.5; % AFT DAMPING - IN DEFAULT CONTROL - TODO -ensure this order match
 param2 = 0.5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '10';  % seconds
+stopTime = '60';  % seconds
 % number of required in and out ports in new controller model 
 N_IN = 2;
 N_OUT = 2;
@@ -50,7 +50,7 @@ waveType = 'irregular';
 ctrlModelName = 'defaultCtrlModel';
 % ctrlModelName = 'ctrlStarter'; 
 
-fexInportsModelName = 'fexInports';
+
 % SWITCH COMMENT FOR TWIN
 %twinType = 'WECSim';
 twinType = 'systemID';
@@ -76,7 +76,7 @@ if strcmp(twinType, 'WECSim')
             return
     end
 else
-    Ts = 1/1000; % slow down for SystemID too??
+    Ts = 1/1000; 
 end
 
 
@@ -269,11 +269,20 @@ if in < N_IN || out < N_OUT
     return
 end
 
+
+
 % make sure the variant sub-system for udp send/recieve and fileLogging is
 % set to local - NO UDP
 set_param([pTopModelName, '/params'], 'OverrideUsingVariant', 'Local');
 set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
- 
+
+% swtich subsystem for control params between realtime and non-realtime 
+% realtime has 1's for the contant block values, non-realtime takes the
+% workspace variables - allows starttarget and ctrl functions to work
+set_param([pTopModelName, '/params', '/Local', '/ControlParams'], 'OverrideUsingVariant', simulationType);
+
+
+
 
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);

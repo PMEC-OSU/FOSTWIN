@@ -43,11 +43,11 @@ end
 
 
 %change the constant bock parameters that initialize the control params 
-pTg.setparam([pTopModelName, '/params', '/Local', '/param1'], "Value", (param1));
-pTg.setparam([pTopModelName, '/params', '/Local', '/param2'], "Value", (param2));
-pTg.setparam([pTopModelName, '/params', '/Local', '/param3'], "Value", (param3));
-pTg.setparam([pTopModelName, '/params', '/Local', '/param4'], "Value", (param4));
-pTg.setparam([pTopModelName, '/params', '/Local', '/waveH'], "Value", (waveH));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param1'], "Value", (param1));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param2'], "Value", (param2));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param3'], "Value", (param3));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param4'], "Value", (param4));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/waveH'], "Value", (waveH));
 
 % pTg.setparam('pTopModel/param1','Value',(param1));
 % pTg.setparam('pTopModel/param2',"Value",(param2));
