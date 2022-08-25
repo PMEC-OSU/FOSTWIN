@@ -12,8 +12,8 @@ simu.mode = 'normal';
 simu.explorer = 'off';
 simu.domainSize = 2;
 simu.cicEndTime=20;
-simu.solver = 'ode3';
-% simu.ssCalc=1;
+simu.solver = 'ode4';
+simu.stateSpace=1;
 
 %% Wave Information
 switch waveType
