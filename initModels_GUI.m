@@ -28,8 +28,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-simulationType = 'NonRealTime';
-% simulationType = 'SingleSpeedgoat';
+%simulationType = 'NonRealTime';
+simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
@@ -232,12 +232,13 @@ switch twinType
         [FexAft, FexBow, wave, admittance_ss, Ef] = SIDWaveGenerator(Ts,stopTime,admittanceModel,excitationModel,1,waveT, waveType); % always passing in 1 for waveH now - mult with gain
 end
 
-% for inputs to workspace
+% for inputs for inports
 FexAftTime = FexAft.Time;
 FexAftData = squeeze(FexAft.Data);
 
 FexBowTime = FexBow.Time;
 FexBowData = squeeze(FexBow.Data);
+
 
 %% === Setting up the model parameters ====================================
 load_system(twinModelName)
@@ -284,13 +285,9 @@ set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
 set_param([pTopModelName, '/params', '/Local', '/ControlParams'], 'OverrideUsingVariant', simulationType);
 
 
-
-
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
 pTopActiveConfig = getActiveConfigSet(pTopModelName);
-%fexInportsConfig = getActiveConfigSet(fexInportsModelName);
-
 
 set_param(twinActiveConfig,'StopTime',stopTime);
 set_param(ctrlActiveConfig,'StopTime',stopTime);
@@ -337,7 +334,12 @@ switch simulationType
         
         open_system(pTopModelName)
         
-        data = sim(pTopModelName);
+        % setup the inputs and run simulation
+        set_param(pTopModelName,'LoadExternalInput','off');
+        in = Simulink.SimulationInput(pTopModelName);
+        in = in.setExternalInput([FexAftTime, FexAftData, FexBowData]);
+        data = sim(in);
+
         switch twinType
             case 'WECSim'
                 %wecSimPost; % TODO - Bret - is this required?
@@ -349,7 +351,6 @@ switch simulationType
         
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
-%        set_param(fexInportsConfig, 'SolverType', 'Fixed-step', 'FixedStep', 'Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         
         
@@ -390,9 +391,21 @@ switch simulationType
         fprintf('*** Build Simulink RT code (Single Speedgoat) ...\n\n')
         
         try
+
+            % specify input
+            inportSignalFexAft = [pTopModelName '/FexAft'];
+            inportSignalFexBow = [pTopModelName '/FexBow'];
+
+            set_param(inportSignalFexAft,'Interpolate','off')
+            set_param(inportSignalFexBow,'Interpolate','off')
+
+            set_param(pTopModelName,'ExternalInput','FexAft, FexBow');
+            set_param(pTopModelName,'LoadExternalInput','on');
+
             slbuild(pTopModelName);
-%             app_object = slrealtime.Application(pTopModelName);
-%             updateRootLevelInportData(app_object);
+            
+            %app_object = slrealtime.Application(pTopModelName);
+            %updateRootLevelInportData(app_object);
 
         catch e
             if isa(e,'MSLException')

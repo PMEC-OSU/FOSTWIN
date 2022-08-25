@@ -3,12 +3,14 @@ switch simulationType
     % signal processing for realtime data
     case "SingleSpeedgoat"
         % IF RUNNING REALTIME LOCALLY - SET YOUR SPEEDOGOAT IP HERE
-       % speedgoatIP = '192.168.2.248';
+        speedgoatIP = '192.168.2.248';
 
         pTopModelName = 'FOSTWIN';
         % IF RUNNING REALTIME LOCALLY - SET A NEW DATA FOLDER HERE WITH
         % FOSTWIN AT THE END OF THE PATH
-        % loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
+        %loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
+        loggingDataDir =  'D:\log\FOSTWIN';
+        
 
 
         % CHANGE THE VLAUE AFTER THE "-pw" flag if you have a non-default
@@ -28,7 +30,6 @@ switch simulationType
         
         slrealtime.fileLogImport('Directory', loggingDataDir);
 
-        
         
         % Get data from speedgoat
         runIDs = Simulink.sdi.getAllRunIDs; % get run ID
@@ -55,11 +56,11 @@ switch simulationType
                 end
             end
             
-            outputFT.Conditions.wave.H = waveH;
-            outputFT.Conditions.wave.T = waveT;
-            outputFT.Conditions.wavetype = waveType;
-            outputFT.Conditions.Ts = Ts;
-            outputFT.Conditions.simulationType = simulationType;
+%             outputFT.Conditions.wave.H = waveH;
+%             outputFT.Conditions.wave.T = waveT;
+%             outputFT.Conditions.wavetype = waveType;
+%             outputFT.Conditions.Ts = Ts;
+%             outputFT.Conditions.simulationType = simulationType;
 
             if strcmp(twinType, 'WECSim')
                 % add get WECSim post-processed data

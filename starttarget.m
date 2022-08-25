@@ -30,15 +30,14 @@ param4 = param4New;
 % load_system(pTopModelName);
 
 
- 
 % make sure previous was stopped then load the model
 switch simulationType
     case 'SingleSpeedgoat'
         pTg.stop;
         % needs to be loaded to modify the inport data
         pTg.load(pTopModelName);
-    case 'TwoSpeedgoats'
-       %TODO 
+    otherwise
+        error('Currently SingleSpeedgoat is the only supported option for real-time')
 end
 
 
@@ -59,5 +58,7 @@ pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpee
 % start the target
 switch simulationType
     case 'SingleSpeedgoat'
-        pTg.start;
+        pTg.start('AutoImportFileLog', false, 'ExportToBaseWorkspace', false, 'FileLogMaxRuns', 4);
+    otherwise
+        error('Currently SingleSpeedgoat is the only supported option for real-time')    
 end
