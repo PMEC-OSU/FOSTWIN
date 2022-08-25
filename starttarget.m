@@ -58,7 +58,7 @@ pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpee
 % start the target
 switch simulationType
     case 'SingleSpeedgoat'
-        pTg.start('AutoImportFileLog', false, 'ExportToBaseWorkspace', false, 'FileLogMaxRuns', 4);
+        pTg.start('AutoImportFileLog', false, 'ExportToBaseWorkspace', false, 'FileLogMaxRuns', 1);
     otherwise
         error('Currently SingleSpeedgoat is the only supported option for real-time')    
 end

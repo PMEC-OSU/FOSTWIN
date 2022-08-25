@@ -8,8 +8,8 @@ switch simulationType
         pTopModelName = 'FOSTWIN';
         % IF RUNNING REALTIME LOCALLY - SET A NEW DATA FOLDER HERE WITH
         % FOSTWIN AT THE END OF THE PATH
-        %loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
-        loggingDataDir =  'D:\log\FOSTWIN';
+        loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
+        %loggingDataDir =  'D:\log\FOSTWIN';
         
 
 
