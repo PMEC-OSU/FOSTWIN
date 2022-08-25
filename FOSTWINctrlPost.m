@@ -3,12 +3,12 @@ switch simulationType
     % signal processing for realtime data
     case "SingleSpeedgoat"
         % IF RUNNING REALTIME LOCALLY - SET YOUR SPEEDOGOAT IP HERE
-        speedgoatIP = '192.168.2.248';
+       % speedgoatIP = '192.168.2.248';
 
         pTopModelName = 'FOSTWIN';
         % IF RUNNING REALTIME LOCALLY - SET A NEW DATA FOLDER HERE WITH
         % FOSTWIN AT THE END OF THE PATH
-        loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
+        % loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
 
 
         % CHANGE THE VLAUE AFTER THE "-pw" flag if you have a non-default
@@ -26,8 +26,7 @@ switch simulationType
             Ts = 1/1000;
         end
         
-%         slrealtime.fileLogImport('Directory', loggingDataDir);
-         importLogData(loggingDataDir)
+        slrealtime.fileLogImport('Directory', loggingDataDir);
 
         
         
@@ -62,11 +61,11 @@ switch simulationType
             outputSimulation.ControlSignals.ctrlParam3 = squeeze(outputSimulation.ControlSignals.ctrlParam3);
             outputSimulation.ControlSignals.ctrlParam4 = squeeze(outputSimulation.ControlSignals.ctrlParam4);
             
-%             outputSimulation.Conditions.wave.H = waveH;
-%             outputSimulation.Conditions.wave.T = waveT;
-%             outputSimulation.Conditions.wavetype = waveType;
-%             outputSimulation.Conditions.Ts = Ts;
-%             outputSimulation.Conditions.simulationType = simulationType;
+            outputSimulation.Conditions.wave.H = waveH;
+            outputSimulation.Conditions.wave.T = waveT;
+            outputSimulation.Conditions.wavetype = waveType;
+            outputSimulation.Conditions.Ts = Ts;
+            outputSimulation.Conditions.simulationType = simulationType;
 
             % TODO - when wecsim is working again - make sure post process
             % works 
