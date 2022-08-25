@@ -7,6 +7,8 @@ clearvars; close all; clc;
 % generator with same number)
 rng('default')
 
+warning on verbose
+
 % Example wecSimPath variable - use full path
 % wecSimPath = 'D:\src\wec-sim-5.0\source';
 wecSimPath = 'D:\src\WEC-Sim\source';
@@ -195,7 +197,7 @@ Simulink.defineIntEnumType('fostwinStateEnum', ...
 
 
 %% === definition of constants ============================================
-Kt = 0.943;                     % motor torque constant in Nm/A
+Kt = 0.943;                                 % motor torque constant in Nm/A
 N = 3.75;                                   % gear ratio between flap and motor
 Rpn = 0.5275;                               % motor winding resistance phase-neutral
 lpFreqCurrent = 200;                        % cut-off frequency for first order low pass applied to current (only for fault state transition checking, not in feedback path)
@@ -235,7 +237,7 @@ FexAftTime = FexAft.Time;
 FexAftData = squeeze(FexAft.Data);
 
 FexBowTime = FexBow.Time;
-FexBowData = squeeze(FexAft.Data);
+FexBowData = squeeze(FexBow.Data);
 
 %% === Setting up the model parameters ====================================
 load_system(twinModelName)
