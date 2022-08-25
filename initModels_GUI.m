@@ -10,8 +10,8 @@ rng('default')
 warning on verbose
 
 % Example wecSimPath variable - use full path
-% wecSimPath = 'D:\src\wec-sim-5.0\source';
-wecSimPath = 'D:\src\WEC-Sim\source';
+wecSimPath = 'D:\src\wec-sim-5.0\source';
+%wecSimPath = 'D:\src\WEC-Sim\source';
 
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
 %wecSimPath = 'C:/Software/WEC-Sim/source';
@@ -35,7 +35,7 @@ simulationType = 'NonRealTime';
 waveH = 0.136;
 waveT = 2.61;
 param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
-param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
+param2 = 5  ; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 stopTime = '180';  % seconds
@@ -70,9 +70,9 @@ end
 if strcmp(twinType, 'WECSim')
     switch waveType
         case 'regular'
-            Ts = 1/100;
+            Ts = 1/200;
         case 'irregular'
-            Ts = 1/100;    % slower for the JONSWAP - avoid overflow
+            Ts = 1/200;    % slower for the JONSWAP - avoid overflow
         otherwise
             fprintf('\nUnknown wave type selected... \n\nPlease choose regular vs irregular.');
             return
@@ -200,8 +200,8 @@ Simulink.defineIntEnumType('fostwinStateEnum', ...
 Kt = 0.943;                                 % motor torque constant in Nm/A
 N = 3.75;                                   % gear ratio between flap and motor
 Rpn = 0.5275;                               % motor winding resistance phase-neutral
-lpFreqCurrent = 200;                        % cut-off frequency for first order low pass applied to current (only for fault state transition checking, not in feedback path)
-lpFreqVelocity = 60;                        % cut-off frequency for first order low pass applied to velocity signal (in default controller)
+lpFreqCurrent = 50;                         % cut-off frequency for first order low pass applied to current (only for fault state transition checking, not in feedback path)
+lpFreqVelocity = 50;                        % cut-off frequency for first order low pass applied to velocity signal (in default controller)
 encCountsPerRev = 4096;                     % encoder counts per revolution (1024 lines with quadrature)
 encNoisePower = 1e-8;                       % noise on encoder, based on experimental observations
 
