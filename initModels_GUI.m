@@ -32,11 +32,11 @@ simulationType = 'NonRealTime';
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
 waveT = 2.61;
-param1 = 0.5; % AFT DAMPING - IN DEFAULT CONTROL - TODO -ensure this order matches UI
-param2 = 0.5; % BOW DAMPING - IN DEAULT CONTROL
+param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
+param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '60';  % seconds
+stopTime = '180';  % seconds
 % number of required in and out ports in new controller model 
 N_IN = 2;
 N_OUT = 2;
