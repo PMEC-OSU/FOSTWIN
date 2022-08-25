@@ -49,33 +49,25 @@ switch simulationType
                     pat = asManyOfPattern(level);
                     blockName = extractAfter(blockNameTot,pat);
                     signalName = char(signalNames(j));
-                    outputSimulation.(blockName).(signalName) = data1{i}.Values.(signalName).Data;
-                    outputSimulation.(blockName).time = data1{i}.Values.(signalName).Time;
+                    outputFT.(blockName).(signalName) = squeeze(data1{i}.Values.(signalName).Data);
+                    outputFT.(blockName).time = data1{i}.Values.(signalName).Time;
+
                 end
             end
-
-            outputSimulation.Power.powerMechAverage = squeeze(outputSimulation.Power.powerMechAverage);
-            outputSimulation.ControlSignals.CaptureWidth = squeeze(outputSimulation.ControlSignals.CaptureWidth);
-            outputSimulation.ControlSignals.ctrlParam1 = squeeze(outputSimulation.ControlSignals.ctrlParam1);
-            outputSimulation.ControlSignals.ctrlParam2 = squeeze(outputSimulation.ControlSignals.ctrlParam2);
-            outputSimulation.ControlSignals.ctrlParam3 = squeeze(outputSimulation.ControlSignals.ctrlParam3);
-            outputSimulation.ControlSignals.ctrlParam4 = squeeze(outputSimulation.ControlSignals.ctrlParam4);
             
-            outputSimulation.Conditions.wave.H = waveH;
-            outputSimulation.Conditions.wave.T = waveT;
-            outputSimulation.Conditions.wavetype = waveType;
-            outputSimulation.Conditions.Ts = Ts;
-            outputSimulation.Conditions.simulationType = simulationType;
+            outputFT.Conditions.wave.H = waveH;
+            outputFT.Conditions.wave.T = waveT;
+            outputFT.Conditions.wavetype = waveType;
+            outputFT.Conditions.Ts = Ts;
+            outputFT.Conditions.simulationType = simulationType;
 
-            % TODO - when wecsim is working again - make sure post process
-            % works 
             if strcmp(twinType, 'WECSim')
                 % add get WECSim post-processed data
                 stopWecSim;
                 % add WECSim post-processed data to the output that is stored
-                outputSimulation.WECSim = output;
+                outputFT.WECSim = output;
             end
-            save('simulation-data.mat','outputSimulation');
+            save('simulation-data.mat','outputFT');
         end
     case "NonRealTime"
         % non-realtime signal processing
@@ -86,25 +78,24 @@ switch simulationType
             for i = 1:length(blockNames)
                 signalNames = fieldnames(data.(blockNames{i}));
                 for j = 1:length(signalNames)
-                    output.(blockNames{i}).(signalNames{j}) = data.(blockNames{i}).(signalNames{j}).Data;
-                    output.(blockNames{i}).time = data.(blockNames{i}).(signalNames{j}).Time;
+                    outputFT.(blockNames{i}).(signalNames{j}) = squeeze(data.(blockNames{i}).(signalNames{j}).Data);
+                    outputFT.(blockNames{i}).time = squeeze(data.(blockNames{i}).(signalNames{j}).Time);
                 end
             end
+                       
+            outputFT.Conditions.wave.H = waveH;
+            outputFT.Conditions.wave.T = waveT;
+            outputFT.Conditions.wavetype = waveType;
+            outputFT.Conditions.Ts = Ts;
+            outputFT.Conditions.simulationType = simulationType;
             
-            output.Power.powerMechAverage = squeeze(output.Power.powerMechAverage);
-            output.ControlSignals.CaptureWidth = squeeze(output.ControlSignals.CaptureWidth);
-            output.ControlSignals.ctrlParam1 = squeeze(output.ControlSignals.ctrlParam1);
-            output.ControlSignals.ctrlParam2 = squeeze(output.ControlSignals.ctrlParam2);
-            output.ControlSignals.ctrlParam3 = squeeze(output.ControlSignals.ctrlParam3);
-            output.ControlSignals.ctrlParam4 = squeeze(output.ControlSignals.ctrlParam4);
-            
-            output.Conditions.wave.H = waveH;
-            output.Conditions.wave.T = waveT;
-            output.Conditions.wavetype = waveType;
-            output.Conditions.Ts = Ts;
-            output.Conditions.simulationType = simulationType;
-            
-            save('simulation-data.mat','output');
+            if strcmp(twinType, 'WECSim')
+                % add get WECSim post-processed data
+                stopWecSim;
+                % add WECSim post-processed data to the output that is stored
+                outputFT.WECSim = output;
+            end
+            save('simulation-data.mat','outputFT');
         end
     otherwise
         fprintf("Unable to post process, unknown simulation type selected...\n")

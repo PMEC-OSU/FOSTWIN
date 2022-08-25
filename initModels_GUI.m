@@ -340,8 +340,8 @@ switch simulationType
         data = sim(pTopModelName);
         switch twinType
             case 'WECSim'
-                % wecSimPost; % TODO - Bret - is this required?
-                stopWecSim;    
+                %wecSimPost; % TODO - Bret - is this required?
+                %stopWecSim;    
             case 'systemID'
                 FOSTWINctrlPost;
         end

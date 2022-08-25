@@ -59,7 +59,7 @@ if strcmp(wavetype,'irregular')
 
     m0 = trapz(f,S);
     Hs = 4*sqrt(m0);
-    fprintf('Target Hs = %4.3f, actual Hs = %4.3f \n',Hm0, Hs)
+    %fprintf('Target Hs = %4.3f, actual Hs = %4.3f \n',Hm0, Hs)
 
     % generate spectrum with random phases
     phi = 2*pi*rand(size(S)); % random phases
