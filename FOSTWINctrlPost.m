@@ -10,7 +10,7 @@ switch simulationType
         % FOSTWIN AT THE END OF THE PATH
         loggingDataDir =  'D:\src\SANDIA-OSU\FOSTWIN-Data\FOSTWIN';
         %loggingDataDir =  'D:\log\FOSTWIN';
-        
+        mkdir(loggingDataDir);
 
 
         % CHANGE THE VLAUE AFTER THE "-pw" flag if you have a non-default
@@ -18,12 +18,7 @@ switch simulationType
         system(['pscp -pw slrt -r slrt@', speedgoatIP, ':/home/slrt/applications/', pTopModelName, '/* ' ,loggingDataDir])
         % get the Ts in this engine too
         if strcmp(twinType, 'WECSim')
-            switch waveType
-                case 'regular'
-                    Ts = 1/100; 
-                case 'irregular'
-                    Ts = 1/100;    
-            end
+            Ts = 1/200;
         else 
             Ts = 1/1000;
         end
@@ -56,11 +51,11 @@ switch simulationType
                 end
             end
             
-%             outputFT.Conditions.wave.H = waveH;
-%             outputFT.Conditions.wave.T = waveT;
-%             outputFT.Conditions.wavetype = waveType;
-%             outputFT.Conditions.Ts = Ts;
-%             outputFT.Conditions.simulationType = simulationType;
+            outputFT.Conditions.wave.H = waveH;
+            outputFT.Conditions.wave.T = waveT;
+            outputFT.Conditions.wavetype = waveType;
+            outputFT.Conditions.Ts = Ts;
+            outputFT.Conditions.simulationType = simulationType;
 
             if strcmp(twinType, 'WECSim')
                 % add get WECSim post-processed data

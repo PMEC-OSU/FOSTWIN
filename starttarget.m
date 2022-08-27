@@ -14,7 +14,7 @@ param2New = param2;
 param3New = param3;
 param4New = param4;
 
-clear logsout; % when restarting - clear previous data file
+% clear logsout; % when restarting - clear previous data file
 
 % with wecsim - cannot change any wave parameters without a re-compile  
 if strcmp(twinModelName, 'WECSim')
@@ -27,7 +27,6 @@ param2 = param2New;
 param3 = param3New;
 param4 = param4New; 
 
-% load_system(pTopModelName);
 
 
 % make sure previous was stopped then load the model
@@ -48,11 +47,6 @@ pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpee
 pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param4'], "Value", (param4));
 pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/waveH'], "Value", (waveH));
 
-% pTg.setparam('pTopModel/param1','Value',(param1));
-% pTg.setparam('pTopModel/param2',"Value",(param2));
-% pTg.setparam('pTopModel/param3',"Value",(param3));
-% pTg.setparam('pTopModel/param4',"Value",(param4));
-% pTg.setparam('pTopModel/waveH',"Value",(waveH));
  
 
 % start the target

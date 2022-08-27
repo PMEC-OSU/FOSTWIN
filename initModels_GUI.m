@@ -10,8 +10,8 @@ rng('default')
 warning on verbose
 
 % Example wecSimPath variable - use full path
-wecSimPath = 'D:\src\wec-sim-5.0\source';
-%wecSimPath = 'D:\src\WEC-Sim\source';
+% wecSimPath = 'D:\src\wec-sim-5.0\source';
+wecSimPath = 'D:\src\WEC-Sim\source';
 
 % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
 %wecSimPath = 'C:/Software/WEC-Sim/source';
@@ -28,8 +28,8 @@ addpath(genpath(wecSimPath));
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-%simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
@@ -38,7 +38,7 @@ param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 5  ; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '180';  % seconds
+stopTime = '30';  % seconds
 % number of required in and out ports in new controller model 
 N_IN = 2;
 N_OUT = 2;
@@ -55,7 +55,7 @@ ctrlModelName = 'defaultCtrlModel';
 
 % SWITCH COMMENT FOR TWIN
 twinType = 'WECSim';
-%twinType = 'systemID';
+% twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
@@ -215,16 +215,16 @@ maxFaultCount = 3;                          % maximum number of ctrlNormal -> ct
 % =========================================================================
 
 % Calculate excitation forces (used in SystemID twin)
-% TODO - regular waves don't currenty work - regular doesn't return the
-% wave argument
+
+
 switch twinType
     case 'WECSim'
-%         wecSimSetup;
         run('wecSimInputFile');
         clear simu waves body cable pto constraint ptosim mooring 
 
         runWecSimCML = 1;
         run('initializeWecSim');
+        % runs twice - runs FOSWEC_v2 block
         sim(simu.simMechanicsFile, [], simset('SrcWorkspace','parent'));
         % data not used in wecsim so setting stop time to 1 to make pre-process a bit more quick
         [FexAft, FexBow, wave, admittance_ss, Ef] = SIDWaveGenerator(Ts,'1',admittanceModel,excitationModel,1,waveT, waveType);
@@ -252,20 +252,20 @@ load_system(pTopModelName)
 %CHECKS THAT CONTROLLER HAS CORRECT NUMBER OF INPORTS AND OUTPORTS
 blks = find_system(ctrlModelName, 'Type', 'Block');
 types = get_param(blks, 'BlockType');
-in = 0;
-out = 0;
+in_count = 0;
+out_count = 0;
 for n=1:length(types)
     a = types(n);
     if strcmp(a, 'Inport')
-        in = in + 1;
+        in_count = in_count + 1;
     end
     if strcmp(a, 'Outport')
-        out = out + 1;
+        out_count = out_count + 1;
     end
 end
 
 
-if in < N_IN || out < N_OUT
+if in_count < N_IN || out_count < N_OUT
     fprintf('Number of inports or outputs in uploaded control model are not correct.\n\n');
     fprintf('Expected %d Inports and %d Outports.  Found %d Inports and %d Outports.\n\n', N_IN, N_OUT, in, out);
     fprintf('Compilation Complete');
@@ -339,14 +339,8 @@ switch simulationType
         in = Simulink.SimulationInput(pTopModelName);
         in = in.setExternalInput([FexAftTime, FexAftData, FexBowData]);
         data = sim(in);
+        FOSTWINctrlPost;
 
-        switch twinType
-            case 'WECSim'
-                %wecSimPost; % TODO - Bret - is this required?
-                %stopWecSim;    
-            case 'systemID'
-                FOSTWINctrlPost;
-        end
     case 'SingleSpeedgoat'
         
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
