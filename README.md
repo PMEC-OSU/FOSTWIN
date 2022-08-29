@@ -22,6 +22,7 @@
   - [Controller State](#controller-state)
 - [Web Interface](#web-interface)
     - [Ocean Scale](#ocean-scale)
+    - [Power Signs](#power-signs)
     - [Compilation](#compilation)
     - [Control Parameters](#control-parameters-1)
       - [Wave Height](#wave-height)
@@ -257,6 +258,14 @@ State control chart:
 **Scaling is 1:33 for WaveTank:Ocean scale**
 
 In the compilation options, you'll note that the wave height and wave period display an "Ocean Scale" value underneath the selections.  These values aren't used in the modeling, as the system is modeled at tank scale, but provide a way to set your modeling conditions up for realistic waves if your more familiar with Ocean Scale number.
+
+### Power Signs
+
+Power absorbed from the wave is negative (-).
+
+![](images/negPower.png)
+
+
 
 ### Compilation
 
