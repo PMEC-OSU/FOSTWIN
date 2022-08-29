@@ -349,15 +349,17 @@ Data Logged:
   - `powerNetMean` - running mean of `powerNet` - at the end of the simulation, the last value is the mean calc across simulation duration.  At each step in the simulation, the num samples denominator is added to by 1.  Meaning the avg at the start of the simulation is valid for the number of time steps passed.
   - `powerNetMovingAverage` - Moving average of `powerNet` - Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves.
 - Conditions
-  - wave - height (H) and period (T) of the waves simulated
-  - waveType - regular or irregular
-  - Ts - time step - the rate at witch the speedgoat executes every step in the differential equation that makes up these models.  Either 0.001 s (1ms per loop or 1000hz) or 0.01 s when using WEC-Sim digital twin and irregular (JONSWAP) wave spectrum.
+  - `wave` - height (H) and period (T) of the waves simulated
+  - `waveType` - regular or irregular
+  - `Ts` - time step - the rate at witch the speedgoat executes every step in the differential equation that makes up these models.  Either 0.001 s (1ms per loop or 1000hz) or 0.01 s when using WEC-Sim digital twin and irregular (JONSWAP) wave spectrum.
+  - `simulationType` - SingleSpeedgoat or NonRealtime
 - Control Signals
-  - Aft - Position and Current (signals passed between ctrl and twin)
-  - Bow - Position and Current (signals passed between ctrl and twin)
-  - Control_Signals - 1 through 4 for the 4 custom outports of the control model (default or custom upload)
-  - Control_Params - 1 through 4 for the 4 custom inports of the control model (default or custom upload)
-  - Capture Width - Energy Flux is calculated before starting the simulation based on the wave conditions in units of W/m of crest width.  Then at every time step, the Capture Width is calculated as the ratio of average power being abosorbed and the mean power (averaged over the wave period) per unit crest width.  Capture Width has units of meters and shown graphically in bottom right of the [Top Level Model](#top-level-model).
+  - `Aft` - Position and Current (signals passed between ctrl and twin)
+  - `Bow` - Position and Current (signals passed between ctrl and twin)
+  - `ctrlSignals` - 1 through 4 for the 4 custom outports of the control model (default or custom upload)
+  - `ctrlParams` - 1 through 4 for the 4 custom inports of the control model (default or custom upload)
+  - `state` - State values from ctl state machine
+  - `waveH_rt` - waveH values across simulation - can be changed in realtime mode with `systemID` twin
 
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
