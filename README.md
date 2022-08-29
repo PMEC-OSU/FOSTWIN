@@ -361,6 +361,8 @@ Data Logged:
   - `state` - State values from ctl state machine
   - `waveH_rt` - waveH values across simulation - can be changed in realtime mode with `systemID` twin
 
+When running locally, the custom output from WECsim is available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals in our custom logging system are available.
+
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
 
