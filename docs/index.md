@@ -55,7 +55,7 @@ In addition to the measurements collected and the numerical methods used in the 
 ## Steps to Participate
 In order to participate in the competition, there's just a few steps you'll need to take:
 
-1. Enroll in the FOSTWIN control competition (*link coming soon*)
+1. Enroll in the FOSTWIN control competition [here](https://fostwin-signup.evergreeninnovations.co/)
 2. Get familiar with the FOSWEC Digital Twin and the associated web interface
 3. Develop a custom controller as a Simulink Real-Time model & run in real-time through the web platform
 4. Collect & submit your results from the real-time simulation(s)
