@@ -80,7 +80,7 @@ Following scoring criteria will be evaluated in the order listed, where the subs
 7. On one of the dates you scheduled in Step 3, login to the system, upload your model, set to competition mode, compile, and confirm that your controller can operate at 1 kHz loop rate on baseline Speedgoat target. 
    1. Optionally while running your model, test changing control parameters (if your model has any) to optimize the power output over a 180 s simulation. 
 8. Once satisfied, email your controller and your optimized control parameters (if relevant) to graham@evergreeninnovations.co by **June 16th 2023** 
-9. If your controller was within the top **N** submissions, you'll be emailed with your results and a conversation will start to get your personal information and arrange travel reimbursement to attend the MASK Basin Workshop in September 2023.
+9. If your controller was within the top 5 submissions, you'll be emailed with your results and a conversation will start to get your personal information and arrange up to $2000 in travel reimbursement to attend the MASK Basin Workshop in September 2023.
 
 ## Scheduling times
 
@@ -255,6 +255,8 @@ State control chart:
 
 
 # Web Interface
+
+If it's difficult to see everything inside of the boxes in the web interface, please zoom out to improve the visual quality.  Google chrome is recommended to be used as your browser for best performance.
 
 ### Ocean Scale
 

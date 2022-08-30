@@ -3,7 +3,7 @@
 Develop a controller for a digital twin of the [FOSWEC](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) device.
 The goal of this controller will be to generate the ***most electrical power*** while running on a ***real-time digital twin***.
 The competition will focus on the FOSWEC v2 device tested at the [OSU O.H. Hinsdale Wave Research Laboratory](https://engineering.oregonstate.edu/facilities/wave-lab).
-The top ***N*** electrical power producing controllers will be selected based off data produced and gathered during the simulation and the developer will be awarded bragging rights and travel expense reimbursement for attending the [MASK Basin](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) Workshop in **September 2023**.
+The top 5 electrical power producing controllers will be selected based off data produced and gathered during the simulation and the developer will be awarded bragging rights and up to $2000 in travel expense reimbursement for attending the [MASK Basin](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) Workshop in **September 2023**.
 
 ![](images/FOSWEC2_HWRL.png)
 
@@ -41,7 +41,7 @@ The top ***N*** electrical power producing controllers will be selected based of
 
 ### Competition Award
 
-While everyone who participates in this competition will have the opportunity to advance their WEC modeling and controller skills through the events leading to the [competition submission date](#competition-timeline), the developers of the top ***N*** controllers will be awarded travel expense reimbursement to attend the [**MASK Basin workshop**](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) in **September 2023**.
+While everyone who participates in this competition will have the opportunity to advance their WEC modeling and controller skills through the events leading to the [competition submission date](#competition-timeline), the developers of the top 5 controllers will be awarded up to $2000 in travel expense reimbursement to attend the [**MASK Basin workshop**](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) in **September 2023**.
 Through the final workshop, and the events leading up to the competition submission date, participants and awardees will meet industry leaders and WEC experts from Sandia, Oregon State University, and the NAVY (just to name a few) to grow their wave energy network.
 
 At the workshop, the winning developers will participate in a large scale tank testing campaign of the [Sandia WaveBot](https://www.youtube.com/embed/c4npWk_-Pjk).
@@ -91,9 +91,9 @@ Through these real-time experiments, you can learn what ranges of values for par
 While working with the web interface, you'll get charts of the data flowing throughout the system and are able to download your simulation results to further your experimentation with post-processing in MATLAB.
 
 
-![](images/dashboard-head.jpeg)
+![](images/dashboard-head.png)
 
-![](images/dashboard-charts.jpeg)
+![](images/dashboard-charts.png)
 
 ### Collect Results and Submit <!-- omit in toc -->
 
