@@ -203,7 +203,8 @@ if ismember(portName, allowed_ports) == 0
 end
 
 try 
-    pTg.setparam([pTopModelName, '/', portName], 'Value', value);
+    pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/', portName], "Value", (param1));
+
 catch e
     error = e;
 end

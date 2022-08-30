@@ -9,33 +9,19 @@ rng('default')
 
 warning on verbose
 
-% Example wecSimPath variable - use full path
-% wecSimPath = 'D:\src\wec-sim-5.0\source';
-wecSimPath = 'D:\src\WEC-Sim\source';
-
-% ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
-%wecSimPath = 'C:/Software/WEC-Sim/source';
-    
-
-if strcmp(wecSimPath, '')
-    fprintf('Need to set the path to your WEC-Sim install at line 15 of initModels_GUI.m')
-    return
-end
-
-addpath(genpath(wecSimPath));
 % modifyWECSim_Lib_Frames  %% this needs to be run once when WEC-Sim is
 % updated
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-% simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
 waveT = 2.61;
 param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
-param2 = 5  ; % BOW DAMPING - IN DEAULT CONTROL
+param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 stopTime = '180';  % seconds
@@ -63,11 +49,29 @@ twinType = 'WECSim';
 pTgName = 'EGIBaseline2';
 
 if strcmp(pTgName, '')
-    fprintf("Need to set your speedgoat target name in line 59");
+    fprintf("Need to set your speedgoat target name in line 49");
     return
 end
 
 if strcmp(twinType, 'WECSim')
+    % Example wecSimPath variable - use full path (with D: or C: or
+    % /Users/username/... included) 
+    % wecSimPath = 'D:\src\wec-sim-5.0\source';
+    wecSimPath = 'D:\src\WEC-Sim\source';
+%     wecSimPath = '';
+    
+    % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
+    %wecSimPath = 'C:/Software/WEC-Sim/source';
+        
+    
+    if strcmp(wecSimPath, '')
+        fprintf('*** Need to set the path to your WEC-Sim install at line 61 of initModels_GUI.m\n\n')
+        fprintf('*** If you have not ran WECSim on this computer since you downloaded/ updated the version, please uncomment line 12 once! \n\n*** Then it can be recommented after running once.')
+        return
+    end
+
+    addpath(genpath(wecSimPath));
+
     switch waveType
         case 'regular'
             Ts = 1/200;
