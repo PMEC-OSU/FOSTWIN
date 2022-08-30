@@ -6,4 +6,6 @@ simulation.log
 *.r2021a
 temp/
 output/
+*.autosave
+temp/
 

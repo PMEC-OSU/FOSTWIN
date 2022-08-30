@@ -1,5 +1,5 @@
-% uncomment following lines to test changing parameters without re-compile
-% uncomment through line 11 - WHEN RUNNING FROM MATLAB UI
+% uncomment following lines (3 through 7) to change params when starting/ re-starting
+% simulation
 % waveHNew = .136;
 % param1New = 10;
 % param2New = 10;
@@ -14,7 +14,7 @@ param2New = param2;
 param3New = param3;
 param4New = param4;
 
-clear logsout; % when restarting - clear previous data file
+% clear logsout; % when restarting - clear previous data file
 
 % with wecsim - cannot change any wave parameters without a re-compile  
 if strcmp(twinModelName, 'WECSim')
@@ -27,41 +27,32 @@ param2 = param2New;
 param3 = param3New;
 param4 = param4New; 
 
-% load_system(pTopModelName);
 
 
- 
 % make sure previous was stopped then load the model
 switch simulationType
     case 'SingleSpeedgoat'
         pTg.stop;
         % needs to be loaded to modify the inport data
         pTg.load(pTopModelName);
-    case 'TwoSpeedgoats'
-       %TODO 
+    otherwise
+        error('Currently SingleSpeedgoat is the only supported option for real-time')
 end
 
 
 %change the constant bock parameters that initialize the control params 
-pTg.setparam('pTopModel/param1','Value',(param1));
-pTg.setparam('pTopModel/param2',"Value",(param2));
-pTg.setparam('pTopModel/param3',"Value",(param3));
-pTg.setparam('pTopModel/param4',"Value",(param4));
-pTg.setparam('pTopModel/waveH',"Value",(waveH));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param1'], "Value", (param1));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param2'], "Value", (param2));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param3'], "Value", (param3));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/param4'], "Value", (param4));
+pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/waveH'], "Value", (waveH));
+
  
 
 % start the target
 switch simulationType
     case 'SingleSpeedgoat'
-        pTg.start;
-    case 'TwoSpeedgoats'
-        % start primary
-        pTg.stop;
-        pTg.load(pTopModelName);
-        pTg.start;
-        % start secondary 
-        sTg.stop;
-        sTg.load(sTopModelName);
-        sTg.start;
-    
+        pTg.start('AutoImportFileLog', false, 'ExportToBaseWorkspace', false, 'FileLogMaxRuns', 1);
+    otherwise
+        error('Currently SingleSpeedgoat is the only supported option for real-time')    
 end
