@@ -26,7 +26,7 @@ param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
 param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '180';  % seconds
+stopTime = '30';  % seconds
 % number of required in and out ports in new controller model 
 N_IN = 2;
 N_OUT = 2;
