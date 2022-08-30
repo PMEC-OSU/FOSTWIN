@@ -81,7 +81,7 @@ Through the [open source repository](https://github.com/PMEC-OSU/FOSTWIN), we've
 Then, through the non-real-time modes, you can enable when running the open source code locally, you can iteratively make changes until you're satisfied with your simulation results. 
 
  
-| ![](images/default-ctrl.PNG) | 
+| ![](images/defaultCtrl.png) | 
 | :--: |
 | *Default Controller, note the inports on the left for real-time control coming from the web interface!* |
 

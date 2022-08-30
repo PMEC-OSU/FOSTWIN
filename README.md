@@ -48,6 +48,8 @@
 
 # Competition
 
+For more info on the timeline of the competition and the reward, checkout the page [here](https://pmec-osu.github.io/FOSTWIN/).
+
 ## Rules
 - SystemID (SID - System Identification) Digital Twin Model only - not WECSim
 - Must use provided admittance (including drive train)
@@ -161,7 +163,7 @@ Further, the provided inports and outports have the proper bus type associated w
 
 Here's what it looks like in Simulink:
 
-![](/images/ctrlStarter.PNG)
+![](/images/ctrlStarter.png)
 
 As you can see, the starter has no actual control built in, further the position values from the flaps simulated in the digital twin are terminated, and the current on the Aft and Bow flaps are fed with a constant `0` value so it wouldn't be good to use as is. If your controller doesn't have any parameters that would need to be updated when starting (or restarting) a simulation, or wouldn't need to be changed while the simulation is running, just terminate the inports and don't connect the outports to any wires in your controller model.  
 
