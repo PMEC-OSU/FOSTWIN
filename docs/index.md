@@ -24,7 +24,7 @@ The top ***N*** electrical power producing controllers will be selected based of
 | [OREC/UMERC+METS](https://pacificoceanenergy.org/orec/) info session | September 13-15, 2022 |
 | Drop in Session with Development Team | November 7th, 2022, 9:00 AM MT | 
 | In-person PMEC workshop at Oregon State | Winter 2022/2023 |
-| Final submissions due | Late Spring 2023 (e.g., May 2023) |
+| Final submissions due | Late Spring 2023 (e.g., June 16th 2023) |
 | MASK Basin workshop | September 2023 |
 
 
