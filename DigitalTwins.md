@@ -31,13 +31,13 @@ The control model has the following inputs and outputs available to the user:
 Additionally, input control parameters can be specified by the user.  For example, the default control has damping for each flap as control parameters.
 ### Default control model
 The default control model implements basic velocity proportional damping.
-![](/images/defaultCtrlModel.png)
+![](/images/defaultCtrl.png)
 ### Starter control model
-This is a minimum starting model with a default set of inputs and outputs that serves as a starting point for control algorithm implementation.
-![](/images/CONTROL_STARTER.png)
+This is a minimum starting model with a default set of inports and outports as busses that serves as a starting point for control algorithm implementation.
+![](/images/ctrlStarter.png)
 ## WEC-Sim model
 The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC.  The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory.  This includes matching the water depth and mooring, which was a taut system.
-![](/images/FOSWEC_v2.png)
+![](/images/WECSim.png)
 ## System identification model
 The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory.  System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system.  Input is the motor torque and output is motor position.  
 ![](/images/systemID.png)

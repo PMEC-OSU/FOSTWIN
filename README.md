@@ -169,7 +169,7 @@ As you can see, the starter has no actual control built in, further the position
 
 We've also provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system, this model may be helpful to examine to get familiar with using the inports for control parameters and outports for logging data signals. 
 
-![](/images/defaultCtrl.PNG)
+![](/images/defaultCtrl.png)
 
 ### Control Parameters
 
@@ -217,7 +217,7 @@ end
 
 ### Control Signals 
 
-On the right side of the provided `defaultCtrlModel` and `ctrlStarter`, you'll see that there are always 2 outports.  One of witch is essential for the interaction between the controller and the twin - `ctrl2TwinOut.curAft` and `ctrl2twin.curBow` (built into the starter models), and the other being used for logging and sending data to the charts on the web interface.
+On the right side of the provided `defaultCtrlModel` and `ctrlStarter`, you'll see that there are always 2 outports.  One of witch is essential for the interaction between the controller and the twin - `ctrl2TwinOut.curAft` and `ctrl2TwinOut.curBow` (built into the starter models), and the other being used for logging and sending data to the charts on the web interface.
 
 While there is no requirement to have a meaningful use of the extra outport (`ctrlSignals`) on the control model, it must still exist to successfully compile the controller when running through the web interface.  The four signals condensed into the outport bus are returned in the full resolution data, and populate the very bottom chart on the web platform.  Using the [Edit Control Display](#edit-control-display) button, you can rename the signals on the chart to make interpreting the data easier.  
 
