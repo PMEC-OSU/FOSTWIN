@@ -145,32 +145,21 @@ There is no requirement to make use of the extra `ctrlSignals` output bus; these
 
 ## Controller State
 
-JOHANNES TO PLEASE REVIEW/ EDIT THIS SECTION - DIDN'T MENTION THE FILTERS YET 
-
-In order to make a more realistic simulation, there is an included state machine handling the selected controller going unstable.
+The model contains a supervisory state machine. This state machines ensures that maximum current constraints are not violated and catches controller instabilities.
 
 ![](images/stateCtrl.png)
 
 There are 6 states in this state machine:
-1. Undefined - a non-state, handle edge cases
-2. Init - Starting point 
-3. Normal - selected controller operating without issues
-4. Stabilizing - allow selected controller to stabilize after an error event
-5. Safe Damping - safe condition, where the control is taken over by a default damping controller
-6. Fault - happens after 3 safe damping conditions, essentially a broken controller state
+1. Undefined - a non-state to handle edge cases
+2. Init - starting point 
+3. Normal - main absorption controller operating without issues
+4. Stabilizing - stabilize the system after an excessive motor current
+5. Safe Damping - safe condition, where the absorption control is taken over by a default (and known to be stable) damping controller
+6. Fault - absorption controller deactivated
 
-Operation:
-1. Start Model - Init State
-2. Model runs for 2 seconds (time representative for a controller booting up for a real machine) - Normal State
-3. Model producing current values beyond defined maximum stable current for the digital twin - Safe Damping state (using a safe control scheme) - Stabilizing State
-4. 3 Seconds pass - goes to Safe Damping state where a default safe damping controller is controlling the twin
-5. 20 Seconds of safe damping pass - goes back to Normal State where the selected controller is back in control 
-6. If Normal state with selected controller moves back to current beyond defined maximum values, then steps 4 and 5 are repeated maximum of 3 times
-7. If 3 times is surpassed, then enter Fault state and system is essentially stopped
+The state machine operation is shown in the Simulink State Flow chart below. The system generally remains in the Normal state, unless a large motor current signal is detected. This detection is based on a low-pass filtered version of the instantaneous current, such that a very short current spike does not trigger an error condition. If an excessive current signal is detected, the state machine seeks to stabilize the system and return to the Normal operating state. Continued violation of the motor current limit will trigger the Fault state, where the absorption controller remains deactivated.
 
-State control chart:
 ![](images/stateCtrlChart.png)
-
 
 
 # Web Interface
