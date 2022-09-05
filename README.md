@@ -133,58 +133,15 @@ We have also provided a `defaultCtrlModel` that creates a simple velocity propor
 
 ![](/images/defaultCtrl.png)
 
-### Control Parameters
+### Tunable control parameters
 
-While there is no requirement to manually change parameters within the control model (default or the one you create), the web interface allows for changing control parameters (and wave height if using systemID as the twin) while the model is being run on the [Speedgoat](https://www.speedgoat.com/speedgoat-solutions?utm_term=&utm_campaign=Dynamic+Ad+Groups&utm_source=adwords&utm_medium=ppc&hsa_acc=6520550235&hsa_cam=887795487&hsa_grp=43284490926&hsa_ad=208143357041&hsa_src=g&hsa_tgt=aud-387379185812:dsa-295317350131&hsa_kw=&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gclid=EAIaIQobChMIiNj__c3F8wIVBQutBh1JvQioEAAYAiAAEgJZsfD_BwE) in a realtime simulation, so this version of the project allows the same behavior.  Looking at the `defaultCtrlModel` may help make this more clear.  
+The web interface allows for changing some control parameters while the model is being run on the real-time Speedgoat system. An example of tunable parameters are the aft and bow damping applied in the `defaultCtrlModel`. Varying these parameters, which are mapped to `ctrlParam1` and `ctrlParam2`, allows manipulating the damping force applied to the motor as the simulation is running. This feature can be used to develop a first quick sense for where the optimum damping values may lie. 
 
-In the image from above of the `defaultCtrlModel`, note that two signals (`ctrlParam1` & `ctrlParam2`) from the ctrlParams inport bus are routed into a multiplication block tied to the velocity calculated from the position data from the twin.  These multiplication blocks are a replacement for a gain block that would represent the damping force applied to the motor, and we can change this damping force while a simulation is running via changing the parameter fed into the control model.
+### Control signals 
 
-Via the web platform, we have incorporated a UDP system that takes in the commands from the web UI, converts them from bytes to the appropriate data type, and feeds them into the control model selected (Default or an uploaded model you've created).  If you're running the model locally in non-realtime mode, the control parameters still need to be initialized the same way, however changing during runtime isn't available.  If you're running the model in a realtime environment on your own Speedgoat, we've provided a ```ctrl()``` matlab function that wraps the ```target.setparam()``` Simulink realtime functionality.  Here's an example of how to use it from the matlab prompt:
+On the right-hand side of the `defaultCtrlModel` and `ctrlStarter` models, you will see that there are always 2 outputs. One of these output busses is essential for the interaction between the controller and the twin, containing the motor current setpoints `curAft` and `curBow`. The second output bus is used for logging and sending data to the charts on the web interface.
 
-```C++
->> initModels_GUI
->> starttarget
->> ctrl('param1', 15)
->> ctrl('waveH', 2)
->> pTg.stop 
-...
-```
-
-If you'd prefer to run the command yourself, here is what the ```ctrl()``` function does (you'd run the pTg.setparam() line manually):
-
-```C++
-function [error] = ctrl(portName, value)
-%CTRL - wrapper to set params while running a realtime simulation
-
-error = "";
-pTopModelName = evalin('base','pTopModelName');
-pTg = evalin('base','pTg');
-allowed_ports = ['param1' 'param2' 'param3' 'param4' 'waveH'];
-
-if ismember(portName, allowed_ports) == 0
-   error = sprintf('portName argument not accepted.\nExpected: param1, param2, param3, param4, waveH\nRecieved: %s', portName);
-   return
-end
-
-try 
-    pTg.setparam([pTopModelName, '/params', '/Local', '/ControlParams', '/SingleSpeedgoat', '/', portName], "Value", (param1));
-
-catch e
-    error = e;
-end
-
-end
-```
-
-
-### Control Signals 
-
-On the right side of the provided `defaultCtrlModel` and `ctrlStarter`, you'll see that there are always 2 outports.  One of witch is essential for the interaction between the controller and the twin - `ctrl2TwinOut.curAft` and `ctrl2TwinOut.curBow` (built into the starter models), and the other being used for logging and sending data to the charts on the web interface.
-
-While there is no requirement to have a meaningful use of the extra outport (`ctrlSignals`) on the control model, it must still exist to successfully compile the controller when running through the web interface.  The four signals condensed into the outport bus are returned in the full resolution data, and populate the very bottom chart on the web platform.  Using the [Edit Control Display](#edit-control-display) button, you can rename the signals on the chart to make interpreting the data easier.  
-
-Just like the control parameters fed into your custom controller, if you don't have 4 signals to log for post analysis or to send up to the web platform for viewing during the simulation, just don't connect wires from your controller to the bus assignment block that feeds into the `ctrlSignals` outport.  To avoid warnings during compilation (while the don't mean anything is actually broken), you can connect a constant 0 block to the un-used signals fed into the bus assignment block.  
-
+There is no requirement to make use of the extra `ctrlSignals` output bus; these signals are informational only. However, this bus must still exist to successfully compile the controller when running via the web interface. The four bus signals are returned in the full resolution data, and populate the very bottom chart on the web platform. Using the [Edit Control Display](#edit-control-display) button, you can rename the signals on the chart to make interpreting the data easier. If not making use of the four informational control signals, we recommend wiring a constant 0 block to suppress Simulink warnings.
 
 ## Controller State
 
