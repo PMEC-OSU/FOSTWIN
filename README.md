@@ -4,39 +4,14 @@
 
 
 - [Competition](#competition)
-  - [Rules](#rules)
-  - [Scoring](#scoring)
-- [Participate in Competition](#participate-in-competition)
-  - [Scheduling times](#scheduling-times)
-- [Getting Started](#getting-started)
-- [Top Level Model](#top-level-model)
-- [Running FOSTWIN locally](#running-fostwin-locally)
-- [Developing A Controller](#developing-a-controller)
-    - [Control Parameters](#control-parameters)
-    - [Control Signals](#control-signals)
-  - [Controller State](#controller-state)
-- [Web Interface](#web-interface)
-    - [Ocean Scale](#ocean-scale)
-    - [Power Signs](#power-signs)
-    - [Compilation](#compilation)
-    - [Control Parameters](#control-parameters-1)
-      - [Wave Height](#wave-height)
-    - [Model Upload](#model-upload)
-    - [System Control Buttons](#system-control-buttons)
-      - [Modify Control Display (**Optional**)](#modify-control-display-optional)
-      - [Start/ Stop FOSTWIN](#start-stop-fostwin)
-      - [Prepare & Download Data (and data definitions)](#prepare--download-data-and-data-definitions)
-        - [Aft vs Bow?](#aft-vs-bow)
-      - [Finished With System](#finished-with-system)
-- [Digital Twin Description](#digital-twin-description)
-    - [Interaction](#interaction)
-    - [Model types](#model-types)
-    - [Model overview](#model-overview)
-    - [Wave types](#wave-types)
-  - [Control Model](#control-model)
-    - [Inputs and outputs](#inputs-and-outputs)
-    - [Default control model](#default-control-model)
-    - [Starter control model](#starter-control-model)
+- [Participate in competition](#participate-in-competition)
+- [Getting started](#getting-started)
+- [Top level model](#top-level-model)
+- [Running the FOSTWIN locally](#running-the-fostwin-locally)
+- [Developing a custom controller](#developing-a-custom-controller)
+- [Web interface](#web-interface)
+- [Digital twin description](#digital-twin-description)
+  - [Control model](#control-model)
   - [WEC-Sim model](#wec-sim-model)
   - [System identification model](#system-identification-model)
 
@@ -164,191 +139,130 @@ The state machine operation is shown in the Simulink State Flow chart below. The
 
 # Web Interface
 
-If it's difficult to see everything inside of the boxes in the web interface, please zoom out to improve the visual quality.  Google chrome is recommended to be used as your browser for best performance.
+Google chrome is the the recommended browser for best performance. If it is difficult to see everything inside of the boxes in the web interface, please zoom out to improve the visual quality.  
 
-### Ocean Scale
+### Power signs
 
-**Scaling is 1:33 for WaveTank:Ocean scale**
-
-In the compilation options, you'll note that the wave height and wave period display an "Ocean Scale" value underneath the selections.  These values aren't used in the modeling, as the system is modeled at tank scale, but provide a way to set your modeling conditions up for realistic waves if your more familiar with Ocean Scale number.
-
-### Power Signs
-
-Power absorbed from the wave is negative (-).
-
-![](images/negPower.png)
-
-
+For mechanical power, power absorbed from the waves is negative. Electrical losses (I2R) are always positive. The net power is the sum of the mechanical power and the I2R losses. A negative net power means net power is being absorbed from the waves. A positive net power means the I2R losses outweigh the absorbed wave power. For the competition, optimizing net power means obtaining a **maximum negative value** of the net power mean over the sea state.
 
 ### Compilation
 
+The options shown in the below box are all parameters that cannot be changed without recompiling the code that is executed on the Speedgoat hardware. To change any of these options, stop any running simulation, and then press the `Start Compilation!` button. As the project compiles, the Compilation Report box directly to the right of the options will start to output compilation information. Depending on the length of simulation requested, this compilations could take a few minutes.
 
 ![](images/compilation.png)
 
-The options shown in this box are all parameters in the models that cannot be changed without recompiling the code that is executed on the speedgoat hardware.  In order to change any of these options, you must stop any running simulation, then press the `Start Compilation!` button. You will first be met with a success/ failure message that will pop up in the compilation options box (pictured above), then as the project compiles the Compilation Report box directly to the right of the options will start to output information about the options selected, then information about the compilation itself. Depending on the length of simulation requested, this compilations could take as long as a few minutes.
+**COMPILATION COMPLETE WILL BE RENDERED AT THE END OF THE COMPILATION REPORT INDICATING THE SYSTEM IS READY TO BE STARTED**
 
 Checking the `Set To Competition Mode` box simply changes the `Twin Type` to `SystemID`, and sets the wave conditions as defined above in the [competition rules](#rules)
 
-**COMPILATION COMPLETE WILL BE RENDERED AT THE END OF THE COMPILATION REPORT INDICATING THE SYSTEM IS READY TO BE STARTED**
 
+### Control parameters
 
-### Control Parameters
+When `Start FOSTWIN` is pressed, the initial values for the control parameters will be taken from the relevant sliders. Our default controller uses two control parameters, the aft and the bow damping. "Param3" and "Param4" are not used for this default controller, but are available for the use in custom controllers. More information concerning the control parameters and uploading a custom controller is [here](#developing-a-controller).
 
 ![](images/ctrlparams.png)
 
-**WHEN "START FOSTWIN" IS PRESSED, THE INITIAL VALUES FOR THE CONTROL PARAMETER VALUES ARE TAKEN FROM THESE SLIDERS**
+#### Wave height
 
-The `Default Control` option built into the system has the ability to change the velocity proportional damping values that are applied to the simulated motor torque shafts *while* the simulation is running, this is a unique benefit to running a simulation in realtime. 
+When the twin type is chosen as `SystemID`, you can change the wave height while the simulation is running. When the twin type is `WECSim`, the wave height is fixed to the value chosen at compile time. This limitation is due to the way in which the wave excitation force is calculated within `WECSim`. More information on the two twin types is provided [here](./DigitalTwins.md)
 
-While these values are able to be changed in realtime, when you start a simulation, these values need to be initialized to some starting value.  When you press the `Start FOSTWIN` button, the values shown on the sliders (or spinners) are set as the starting values for the Aft and Bow Damping.  **There is absolutely no requirement to change parameters during a simulation but it's available if you want to!**
+### Custom controller model upload
 
-You'll likely note that "Param3" and "Param4" don't have a unique name and are set to 0 by default, this is because we've built the system to allow for a custom controller to be uploaded into the system, where it could also have parameters that can be changed during the running simulation.  We currently allow for four input parameters to the controller model, again with no requirement to use them, so these "Param3" and "Param4" sliders have no effect on the Default Control model, but are there to allow for the ability to control models with other input parameters (i.e. stiffness).  More information about the control parameters and uploading a custom controller is [here](#developing-a-controller).
-
-
-#### Wave Height
-
-When switching between `WECSim` and `SystemID` in the Twin Type option in the compilation options box, you'll likely note the Wave Height selector in compilation disappears and a new slider becomes available when `SystemID` is selected.  This is due to the way that the waves are pre-calculated and routed into the system when using the `SystemID` twin.  
-
-When `SystemID` is the compiled twin, the wave height slider is used like the other sliders to set the initial value for the wave height when pressing the `Start FOSTWIN` button.  With `SystemID`, you have the ability to change the wave height during the simulation to see how the twin and controller react to different wave conditions.  
-
-This is currently available for the `SystemID` twin only.  We plan to incorporate a similar functionality (changing wave height without re-compiling) for `WECSim` in future versions.  It is available in the `SystemID` twin because the wave excitation forces are pre-calculated (linear calculations) and we can multiply the excitation forces by the set wave height (in slider) at each step in the simulation to dynamically change the magnitude of the excitation forces sent into the digital twin.
-
-More info on the twins [here](./DigitalTwins.md)
-
-### Model Upload
+To upload a model, select the desired model file in the explorer and then click upload. Only .slx files are allowed. When uploading a new model, please make sure that no model is currently running or compiling. If you do not yet have a custom control model, you can simply select Default Control in the [Compilation Options](#compilation). 
 
 ![](images/upload.png)
 
-This section of the dashboard is pretty simple, select the file in the explorer that opens and then click upload!
-
-If you want to upload a second model, just make sure you've either pressed the "Stop FOSTWIN" button or that the simulation has automatically stopped due to stop time, that you're not currently compiling any models, and you're ready to upload a new model.  **Only .slx files are allowed**
-
-**NOTE: If you don't have a model to upload, don't fret!  Use Default Control in the [Compilation Options](#compilation) box**
-
-### System Control Buttons
-
+### System control buttons
+These buttons control the overal system behavior, with details given below.
 ![](images/systemcontrol.png)
 
-#### Modify Control Display (**Optional**)
+#### Modify control display (**optional**)
 
+The Modify Control Display button gives you the following options:
 ![](images/editctrldisp.png)
 
-Wen you click the "Modify Control Display (**Optional**)" button, you'll be met with the options above.  The purpose here is to make the UI reflect your custom controller and input option type.  The Signal names across the top row will update the labels on the very bottom chart in the user interface.  This chart is configured to show any data set up in your uploaded control model that is sent to one of the four available outputs.  This is simply to improve your experience and can be totally skipped if you're fine with the shown names.  
+This diaglog allows for some UI customization, to reflect your custom controller and input option type. The Signal names across the top row update the labels on the very bottom chart in the UI. This chart is configured to show any data set up in your uploaded control model that is sent to one of the four available outputs. 
 
-The Param options for the rest of the dialogue box are just for setting names, ranges (min, max, step), and types for the control options.  We have it pre-populated with realistic ranges and correct names if "Default Control" is selected in the compilation options.  The Type is either a range (slider) or a spinner (a numeric input with up and down arrows to increment the value).  
+The Param options for the rest of the dialogue box are for setting names, ranges (min, max, step), and types for the control options.  These are pre-populated with realistic ranges and correct names if "Default Control" is selected in the compilation options. The Type is either a range (slider) or a spinner (a numeric input with up and down arrows to increment the value). The spinner updates the param when "set param" button is pressed. The sliders update the param when the slider is released.
 
-**The primary difference between range and spinner is a spinner sends the param when "set param" button is pressed, and the sliders set the param and send it to the speedgoat when the slider is released.**
-
-**Pressing "Update" button will save your changes and refresh the main page.**
+Pressing the "Update" button will save your changes and refresh the main page.
 
 #### Start/ Stop FOSTWIN
 
-These buttons start and stop the realtime simulation.  At the matlab prompt, they're equivalent to running `target.start` and `target.stop` where target is your simulink realtime device (Speedgoat).  
-
-Stop isn't always required, since we set a stop time in the compilation options, if the simulation runs for that duration before you press the stop button, the simulation will automatically stop.  This is mostly important for collecting your simulation data at the end of your time on the system.  If you're done with your simulation before the set stop time, then the ability to prepare and download data will fail until you've stopped the simulation.  If you're interested, this is because the realtime data logging happens on the Speedgoat hardware itself, then when a simulation is finished (either by stop time or manually stopping the simulation), the Speedgoat uses it's connection to the host pc to transfer over the logged data.  The data on the host machine is what is returned to you.
+These buttons start and stop the realtime simulation on the Speedgoat real-time. The Stop button allows you to terminate the simulation before the allocated run time. Note that you can only prepare and download data once the simulation is completed, either after the full run time, or until the Stop button was pressed.
 
 #### Prepare & Download Data (and data definitions)
 
-If you've ran a long simulation (> 30 minutes) please be patient!  When you click the Prepare & Download Data button, the logsout variable in the matlab workspace is re-formatted into a `.mat` file, uploaded to a custom server, then transferred to your browser to download.  Take a look at the [Top Level Model](#top-level-model) to help understand the data logging.  
+Pressing this button prepares high temporal resolution (1 kHz for SID) data for subsequent post processing. For long simulation times, this data preparation may take a few minutes. Once complete, a .mat file will be available in your downloads.
 
-Data Logged:
+The logged data includes:
 - Power
   - `powerMechAft` - mechanical power generated on aft flap
   - `powerMechBow` - mechanical power generated on bow flap
   - `powerMechTotal` - sum of the aft and bow mechanical powers
-  - `powerMechAvg` - Moving average of total mechanical power.  Moving average calculated based off wave type selected.  Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves.  
+  - `powerMechAvg` - Moving average of total mechanical power. Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves. 
   - `powerI2R` - I2R loss
   - `powerNet` - `powerMechTotal` - `powerI2R`
-  - `powerNetMean` - running mean of `powerNet` - at the end of the simulation, the last value is the mean calc across simulation duration.  At each step in the simulation, the num samples denominator is added to by 1.  Meaning the avg at the start of the simulation is valid for the number of time steps passed.
+  - `powerNetMean` - running mean of `powerNet` - at the end of the simulation, the last value is the mean calc across the simulation duration.  At each step in the simulation, the num samples denominator is incremented by 1, such that the avg at the start of the simulation is valid for the number of time steps passed.
   - `powerNetMovingAverage` - Moving average of `powerNet` - Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves.
 - Conditions
   - `wave` - height (H) and period (T) of the waves simulated
   - `waveType` - regular or irregular
-  - `Ts` - time step - the rate at witch the speedgoat executes every step in the differential equation that makes up these models.  Either 0.001 s (1ms per loop or 1000hz) or 0.01 s when using WEC-Sim digital twin and irregular (JONSWAP) wave spectrum.
+  - `Ts` - time step - the rate at witch the Speedgoat executes every step.
   - `simulationType` - SingleSpeedgoat or NonRealtime
 - Control Signals
-  - `Aft` - Position and Current (signals passed between ctrl and twin)
-  - `Bow` - Position and Current (signals passed between ctrl and twin)
-  - `ctrlSignals` - 1 through 4 for the 4 custom outports of the control model (default or custom upload)
-  - `ctrlParams` - 1 through 4 for the 4 custom inports of the control model (default or custom upload)
+  - `Aft` - Position and current (signals passed between controller and twin)
+  - `Bow` - Position and current (signals passed between controller and twin)
+  - `ctrlSignals` - 1 through 4 for the 4 custom outputs of the control model (default or custom upload)
+  - `ctrlParams` - 1 through 4 for the 4 custom inputs of the control model (default or custom upload)
   - `state` - State values from ctl state machine
   - `waveH_rt` - waveH values across simulation - can be changed in realtime mode with `systemID` twin
 
-When running locally, the custom output from WECsim is available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals in our custom logging system are available.
-
+When running locally, the custom output from WECsim is also available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals in our custom logging system are available.
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
 
-##### Aft vs Bow?
+##### Aft vs Bow
 
+The bow flap is that facing the incoming waves first.
 <img style="height:350px;margin-bottom:10px;" src="images/real-device.png" align="middle">
 
-#### Finished With System
+#### Finished with system
 
-This button only needs to be pressed once when you're ready to sign out of the system.  This button essentially resets things on the host machine to be ready for a next user.  
+This button only needs to be pressed once when you are ready to sign out of the system. This button resets the remote host machine to be ready for the next user. Note that this button clears all data from the host machine, including any simulation data you have not yet downloaded.
 
-**PLEASE NOTE: PRESSING THE FINISHED WITH SYSTEM BUTTON CLEARS ALL DATA FROM THE HOST MACHINE.  DON'T PRESS FINISHED UNTIL YOUR DATA IS DOWNLOADED IF YOU WANT TO SAVE IT**
+### Ocean Scale
 
+We have used an indicative scale of 1:33 to scale up the tank-scale wave parameters. This may be helpful for developers more familiar with ocean-scale design values. These ocean-scale values are not used anywhere in the simulation and are for guidance only. 
 
+# Digital twin description
 
-# Digital Twin Description
-
-This section of the document outlines the FOSWEC digital twin implementations with the intent of giving a look into the operation of the code behind the models.  
-
-### Interaction
-
-There are currently two ways to interact with the digital twin code:
-- The first is to run the model through a dashboard running in real-time on Speedgoat hardware.
-- The second is to download and run locally a realtime or non-realtime version of the Digital Twin located [here](https://github.com/PMEC-OSU/FOSTWIN).  Realtime simulation requires [Speedgoat](https://www.speedgoat.com/) hardware.
-
+This section of the document briefly outlines the FOSWEC digital twin implementations.
 
 ### Model types
 
-Fundamentally there are two Digital Twin models of the FOSWEC to choose from:  
+There are two digital twin models of the FOSWEC to choose from:  
 - The first is based on the open source code [WEC-Sim](https://wec-sim.github.io/WEC-Sim/master/index.html).  
 - The second is a system identification model based on experimental data collected from the actual FOSWEC device during a test campaign at OSU detailed [here](https://dx.doi.org/10.15473/1782587).  Further information from this test campaign can be found in the paper located [here](https://doi.org/10.1016/j.energy.2021.122485).
 
 ### Model overview
 
-Each version of the Digital Twin includes the plant model and a control model.  The plant model is intended to be fixed, however the control model is meant to be experimented with.  There is a default control model to get started with but it is possible for this model to be replaced with a custom control model by the user.
-
+Each version of the digital twin includes the plant model and a control model. The plant model is intended to be fixed, however the control model is meant to be experimented with. There is a default control model to get started with. This model can easily be replaced with a custom control model by the user.
 
 ### Wave types
 
 Currently there are provisions for running regular and irregular wave conditions.  Irregular waves have a JONSWAP spectrum input.
 
-## Control Model
-
-Two version of control model are given, namely a default model and a starter model.  Either the default or starter model can be modified for the users application.
-
-### Inputs and outputs
-
-The control model has the following inputs and outputs available to the user:
-- Inputs: Flap position relative to the platform for both bow and aft flaps
-- Outputs: Current command to be sent to the motor drive for both bow and aft flaps
-
-Additionally, input control parameters can be specified by the user.  For example, the default control has damping for each flap as control parameters.
-
-### Default control model
-
-The default control model implements basic velocity proportional damping.
-![](/images/defaultCtrl.png)
-
-### Starter control model
-
-This is a minimum starting model with a default set of inputs and outputs that serves as a starting point for control algorithm implementation.
-![](/images/ctrlStarter.png)
-
 ## WEC-Sim model
 
-The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC.  The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory.  This includes matching the water depth and mooring, which was a taut system.
+The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC. The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory. This includes matching the water depth and mooring, which was a taut system.
 ![](/images/WECSim.png)
 
 ## System identification model
 
-The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory.  System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system.  Input is the motor torque and output is motor position.  
+The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory. System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system. Input is the motor torque and output is motor position.  
 ![](/images/systemID.png)
 
-Wave input is created by taking wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
+The wave input for the SID model is created by taking the wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
 
 
