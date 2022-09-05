@@ -47,6 +47,7 @@ switch waveType
              waves.spectrumType = 'JS'; %jonswap
              waves.bem.option = 'EqualEnergy';
              waves.phaseSeed = 1;
+             waves.gamma = 3.3;
         end
         
     otherwise

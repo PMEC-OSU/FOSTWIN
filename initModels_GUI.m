@@ -2,8 +2,6 @@
 % Twin and Controller systems
 clearvars; close all; clc;
 
-
-
 % uncomment following line if wanting random waves with systemID
 % and wanting to have the same waves for multiple runs (seed random
 % generator with same number)
@@ -16,22 +14,24 @@ warning on verbose
 %% === Base model settings ================================================
 % If you don't have access to the realtime hardware, in the following three
 % lines, uncomment 'NonRealTime' for the simulationType variable.
-% simulationType = 'NonRealTime';
-simulationType = 'SingleSpeedgoat';
+simulationType = 'NonRealTime';
+% simulationType = 'SingleSpeedgoat';
 
 % CHANGE STARTING PARAMS HERE
 waveH = 0.136;
 waveT = 2.61;
-param1 = 5; % AFT DAMPING - IN DEFAULT CONTROL
-param2 = 5; % BOW DAMPING - IN DEAULT CONTROL
+param1 = 2.5; % AFT DAMPING - IN DEFAULT CONTROL
+param2 = 2.5; % BOW DAMPING - IN DEAULT CONTROL
 param3 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
-stopTime = '30';  % seconds
-% number of required in and out ports in new controller model 
+stopTime = '300';  % seconds
+
+% number of required in and out ports in controller model 
 N_IN = 2;
 N_OUT = 2;
 simu.paraview.option = 0;
-simu.b2b = 1; % enable body-body (flap->flap) interactions % TODO - is this required?
+simu.b2b = 1; % enable body-body (flap->flap) interactions
+
 % SWITCH COMMENTED LINE TO CHANGE WAVE TYPE
 % waveType = 'regular';
 waveType = 'irregular';
@@ -40,14 +40,12 @@ waveType = 'irregular';
 ctrlModelName = 'defaultCtrlModel';
 % ctrlModelName = 'ctrlStarter'; 
 
-
 % SWITCH COMMENT FOR TWIN
 twinType = 'WECSim';
-% twinType = 'systemID';
+%twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
-% pTgName = 'baseline1';
 pTgName = 'EGIBaseline2';
 
 if strcmp(pTgName, '')
@@ -58,13 +56,8 @@ end
 if strcmp(twinType, 'WECSim')
     % Example wecSimPath variable - use full path (with D: or C: or
     % /Users/username/... included) 
-    % wecSimPath = 'D:\src\wec-sim-5.0\source';
-    wecSimPath = 'D:\src\WEC-Sim\source';
-%     wecSimPath = '';
-    
-    % ADD FULL PATH TO WECSIM BELOW - FULL PATH LIKE ABOVE
-    %wecSimPath = 'C:/Software/WEC-Sim/source';
-        
+    wecSimPath = 'D:\src\wec-sim-5.0\source';
+    % wecSimPath = 'D:\src\WEC-Sim\source';
     
     if strcmp(wecSimPath, '')
         fprintf('*** Need to set the path to your WEC-Sim install at line 61 of initModels_GUI.m\n\n')
@@ -86,7 +79,6 @@ if strcmp(twinType, 'WECSim')
 else
     Ts = 1/1000; 
 end
-
 
 switch simulationType
     case 'NonRealTime'
@@ -221,8 +213,6 @@ maxFaultCount = 3;                          % maximum number of ctrlNormal -> ct
 % =========================================================================
 
 % Calculate excitation forces (used in SystemID twin)
-
-
 switch twinType
     case 'WECSim'
         run('wecSimInputFile');
@@ -248,11 +238,7 @@ FexBowData = squeeze(FexBow.Data);
 
 %% === Setting up the model parameters ====================================
 load_system(twinModelName)
-
 load_system(ctrlModelName)
-
-% load_system(fexInportsModelName)
-
 load_system(pTopModelName)
 
 %CHECKS THAT CONTROLLER HAS CORRECT NUMBER OF INPORTS AND OUTPORTS
@@ -270,15 +256,12 @@ for n=1:length(types)
     end
 end
 
-
 if in_count < N_IN || out_count < N_OUT
     fprintf('Number of inports or outputs in uploaded control model are not correct.\n\n');
     fprintf('Expected %d Inports and %d Outports.  Found %d Inports and %d Outports.\n\n', N_IN, N_OUT, in, out);
     fprintf('Compilation Complete');
     return
 end
-
-
 
 % make sure the variant sub-system for udp send/recieve and fileLogging is
 % set to local - NO UDP
@@ -290,7 +273,6 @@ set_param([pTopModelName, '/ouput'], 'OverrideUsingVariant', 'Local');
 % workspace variables - allows starttarget and ctrl functions to work
 set_param([pTopModelName, '/params', '/Local', '/ControlParams'], 'OverrideUsingVariant', simulationType);
 
-
 twinActiveConfig = getActiveConfigSet(twinModelName);
 ctrlActiveConfig = getActiveConfigSet(ctrlModelName);
 pTopActiveConfig = getActiveConfigSet(pTopModelName);
@@ -300,12 +282,12 @@ set_param(ctrlActiveConfig,'StopTime',stopTime);
 set_param(pTopActiveConfig,'StopTime',stopTime);
 
 
-switch simulationType
-    
+switch simulationType    
     case 'NonRealTime'
         set_param(twinActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
+        
         % handle different user - developed control names
         switch ctrlModelName
             case "defaultCtrlModel"
@@ -319,6 +301,7 @@ switch simulationType
    
         set_param([pTopModelName,'/setpointComs'],'OverrideUsingVariant','nonRT');
         set_param([pTopModelName,'/feedbackComs'],'OverrideUsingVariant','nonRT');
+        
         % set the twin
         set_param([pTopModelName,'/twin'],'OverrideUsingVariant',twinType)
         
@@ -328,8 +311,8 @@ switch simulationType
         
         % the order matters - save the top model last
         save_system(twinModelName)
-        
         save_system(ctrlModelName)
+        
         % save is what causes the refresh box
         Simulink.ModelReference.refresh('FOSTWIN/twin/WECSim'); % fix the refresh dialogue box
         Simulink.ModelReference.refresh('FOSTWIN/twin/systemID'); % fix the refresh dialogue box
@@ -337,7 +320,6 @@ switch simulationType
         Simulink.ModelReference.refresh('FOSTWIN/ctrl/defaultCtrlModel'); % fix the refresh dialogue box box
         
         save_system(pTopModelName)
-        
         open_system(pTopModelName)
         
         % setup the inputs and run simulation
@@ -353,8 +335,7 @@ switch simulationType
         set_param(ctrlActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         set_param(pTopActiveConfig,'SolverType','Fixed-step','FixedStep','Ts');
         
-        
-       % handle different user - developed control names
+        % handle different user - developed control names
         switch ctrlModelName
             case "defaultCtrlModel"
                 set_param([pTopModelName, '/ctrl'], 'OverrideUsingVariant', ctrlModelName);
@@ -428,21 +409,18 @@ switch simulationType
         end
         
         pTg = slrealtime(pTgName);
-        
         try
             pTg.connect
         catch ME
             fprintf('\n*** Target %s not connected. Stopping program. Check connection.\n',pTg.TargetSettings.name)
             fprintf('\n*** Matlab error \n %s \n\n',ME.getReport)
             fprintf('Compilation Complete')
-            
             return
         end
         
         if pTg.isConnected
             fprintf('\n*** Target %s is connected at IP address %s. Waiting for start command ...\n\n',pTg.TargetSettings.name,pTg.TargetSettings.address)
             fprintf('Compilation Complete')
-            
         end
         
 end
