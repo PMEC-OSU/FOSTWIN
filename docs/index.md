@@ -1,9 +1,8 @@
 <!-- ## Mask Basin Workshop & FOSTWIN Digital Twin omit in toc -->
 
 Develop a controller for a digital twin of the [FOSWEC](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) device.
-The goal of this controller will be to generate the ***most electrical power*** while running on a ***real-time digital twin***.
-The competition will focus on the FOSWEC v2 device tested at the [OSU O.H. Hinsdale Wave Research Laboratory](https://engineering.oregonstate.edu/facilities/wave-lab).
-The top 5 electrical power producing controllers will be selected based off data produced and gathered during the simulation and the developer will be awarded bragging rights and up to $2000 in travel expense reimbursement for attending the [MASK Basin](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) Workshop in **September 2023**.
+The goal of this controller will be to generate the ***most net power*** while running on a ***real-time digital twin***. The net power is the absorbed mechanical power, less the winding losses in the motors. The competition will focus on the FOSWEC v2 device tested at the [OSU O.H. Hinsdale Wave Research Laboratory](https://engineering.oregonstate.edu/facilities/wave-lab).
+The top 5 net power producing controllers will be selected based off data produced and gathered during the simulation and the developer will be awarded bragging rights and up to $2000 in travel expense reimbursement for attending the [MASK Basin](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) Workshop in **September 2023**.
 
 ![](images/FOSWEC2_HWRL.png)
 
