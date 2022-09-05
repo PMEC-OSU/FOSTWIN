@@ -92,7 +92,7 @@ While working with the web interface, you'll get charts of the data flowing thro
 
 ![](images/dashboard-charts.png)
 
-### Collect results and Submit <!-- omit in toc -->
+### Collect results and submit <!-- omit in toc -->
 
 You must submit your entry as two files:
 
