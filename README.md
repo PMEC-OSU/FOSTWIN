@@ -9,11 +9,6 @@
 - [Participate in Competition](#participate-in-competition)
   - [Scheduling times](#scheduling-times)
 - [Getting Started](#getting-started)
-  - [Purpose](#purpose)
-      - [New Users](#new-users)
-        - [Tutorials](#tutorials)
-      - [Experienced Users](#experienced-users)
-      - [Additional resources](#additional-resources)
 - [Top Level Model](#top-level-model)
 - [Running FOSTWIN locally](#running-fostwin-locally)
 - [Developing A Controller](#developing-a-controller)
@@ -47,98 +42,69 @@
 
 
 # Competition
-
-For more info on the timeline of the competition and the reward, checkout the page [here](https://pmec-osu.github.io/FOSTWIN/).
+For information on the timeline of the competition and the reward, checkout the page [here](https://pmec-osu.github.io/FOSTWIN/).
 
 ## Rules
-- SystemID (SID - System Identification) Digital Twin Model only - not WECSim
-- Must use provided admittance (including drive train)
+The following rules apply to the control competition:
+- Use of System Identification (SID) digital twin model only (not WECSim)
+- Must use provided SID admittance (includes drive train dynamics)
 - No changes to be made outside of the control model (FOSTWIN/ctrl/userCtrlModel block)
-- Must be able to run in realtime at 1kHz loop rate on Speegoat Baseline target machine
-- Optimize net (mechanical - I2R loss) power capture for sea state with Hs of 0.136 m and Tp of 2.61s for 300s simulation time
-- Irregular waves seeded with 'default' for the random number generator must be used.  In scoring, we'll evaluate with 5 additional seeds unknown to the developer
+- Must be able to run the entire model (including control) in real-time at 1kHz loop rate on our provided Speegoat Baseline target machine
+- Optimize net (mechanical - I2R winding loss) power capture for a JONSWAP (gamma=3.3) sea state with Hs of 0.136 m and Tp of 2.61s for a 300s simulation time
+- Irregular waves seeded with 'default' for the random number generator must be used. In scoring the results, we will evaluate with 5 additional seeds unknown to the developer
+
+If you require any clarification, please email johannes@evergreeninnovations.co.
 
 ## Scoring
 
-Following scoring criteria will be evaluated in the order listed, where the subsequent criteria will only be used to determine the winner if there are ties.
+The following scoring criteria will be evaluated in the order listed, where the subsequent criteria will only be used to determine the winner(s) if there are ties:
 
-1. Mean of net (mechanical - I2R loss) power across the sea states
-2. Peak to mean of net power - smaller difference between peak and mean is a higher score
-3. Total Harmonic Distortion (THD) of current signal
-4. Computational Time
+1. Mean of net (mechanical - I2R loss) power across the sea states as calculated in the provided SID model
+2. Peak-to-mean ratio of the net power - a lower ratio provides a higher score
+3. Total Harmonic Distortion (THD) of the aft and bow current signals
+4. Computational time
 
 
-
-# Participate in Competition
+# Participate in competition
 
 1. Create an account [here](https://fostwin-signup.evergreeninnovations.co/)
-2. You'll be emailed with a link to create a password, after which you'll be automatically logged in and presented with a dashboard where you can select dates to use the system
+2. You will be emailed a link to create a password, providing access to a dashboard where you can select dates to use our provided real-time Speedgoat system
 3. Select up to 10 dates at a time (10 active dates, once a day has passed you're able to schedule more time on the system as needed)
 4. Clone this repository
 5. Get familiar with the models and optionally start with the ctrlStarter.slx file provided
-6. Develop your custom controller locally, most people will do so in non-realtime mode, however the scripts are set up to work with realtime speedgoat hardware if you have access to one
-7. On one of the dates you scheduled in Step 3, login to the system, upload your model, set to competition mode, compile, and confirm that your controller can operate at 1 kHz loop rate on baseline Speedgoat target. 
-   1. Optionally while running your model, test changing control parameters (if your model has any) to optimize the power output over a 180 s simulation. 
-8. Once satisfied, email your controller and your optimized control parameters (if relevant) to graham@evergreeninnovations.co by **June 16th 2023** 
-9. If your controller was within the top 5 submissions, you'll be emailed with your results and a conversation will start to get your personal information and arrange up to $2000 in travel reimbursement to attend the MASK Basin Workshop in September 2023.
+6. Develop your custom controller locally. Most developers will do so in non-realtime mode. However, the various Matlab scripts are set up to work with realtime Speedgoat hardware if you have access to one
+7. On one of the dates you scheduled in Step 3, login to the system, upload your model, set to competition mode, compile, and confirm that your controller can operate at 1 kHz loop rate on a baseline Speedgoat target. 
+   1. Optionally while running your model, test changing control parameters (if your model has any) to optimize the power output over a 300 s simulation. 
+8. Once satisfied, email your controller and your optimized control parameters (if relevant) to johannes@evergreeninnovations.co by **June 16th 2023** 
+9. If your controller is within the top 5 submissions, you'll be emailed with your results and we will arrange for up to $2,000 in travel reimbursement to attend the MASK Basin Workshop in September 2023.
 
 ## Scheduling times
 
-When you enroll in the competition, you are first presented with a dashboard to select dates to use the system.  When you select a given date, you have reserved that date from 00:00:00 -> 23:59:59 in `US/Central` time (Midnight to Midnight).  Use google to convert to your local time if needed.
+When you enroll in the competition, you are first presented with a dashboard to select dates to use the system.  When you select a given date, you have reserved that date from 00:00:00 -> 23:59:59 in `US/Central` time (Midnight to Midnight).
 
 1. When your turn on the system has arrived, the date scheduling dashboard's "To FOSTWIN Dashboard" button will become enabled, and clicking it will take you to the web interface described in the following sub-sections.  
-2. At about 10 minutes prior to the end of your scheduled time, if you're on the system, an alert will be raised from the website saying that you're within 10 minutes of your end time.  At this point, you should stop your simulation and download your data if you're interested in reviewing it.
-3. At about 5 minutes prior to the end of your scheduled time, the system will be automatically stopped, then reset.  This means your data will be lost and won't be able to be recovered.  Hence stopping at 10 minutes and downloading any data.
-4. At the end of your turn, you'll be automatically redirected away from the FOSTWIN dashboard back to the date selection dashboard, here you can schedule more time on the system if desired.
-5. When your next scheduled turn on the system arrives, the button to back to the FOSTWIN dashboard will become enabled again.
-   1. When your turn arrives, and you move over to the FOSTWIN dashboard, if the `STATUS` box in the middle of the screen (with TET and Speedgoat info underneath) doesn't say `System Not In Use`, please press the `Finished With System` to reset the system from the last developer on the system.  
+2. At about 10 minutes prior to the end of your scheduled time an alert will be raised from the website.  At this point, you should stop your simulation and download your data.
+3. At about 5 minutes prior to the end of your scheduled time, the system will be automatically stopped, then reset. This means any non-saved simulation data will be lost.
+4. At the end of your turn, you will be redirected to the date selection dashboard where you can schedule more time on the system if desired.
+   
+**Note**: When your turn arrives, the `STATUS` box in the middle of the FOSTWIN dashboard (with TET and Speedgoat info underneath) should say `System Not In Use`. If this is not the case, please press the `Finished With System` button to reset the system.  
 
-**NOTE** - when scheduling consecutive dates, you will not be kicked out of the system in the one second of time between 23:59:59 and 00:00:00 the following day.
-**NOTE** - click the three dots in the month column to filter for a given month rather than scrolling through the pages.
+# Getting started
 
+In a joint effort between [Sandia National Labs (SNL)](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [Oregon State University (OSU)](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co), we present this open source repository to interact with a digital twin of the Floating Oscillating Surge Wave Energy Device (FOSWEC). This open-source repository is complemented by a web-based platform that gives simple and convenient access to the tools provided here. A video tutorial of how to use this web interface can be found [here](https://digitalops.sandia.gov/Mediasite/Play/5ac7786567ef4e7fa6f77b385a2781ef1d). 
 
-# Getting Started
-## Purpose
-
-In a joint effort between [Sandia National Labs (SNL)](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [Oregon State University (OSU)](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co/speedgoat-simulink-rt-services/), we present this open source repository and a web based platform allowing MATLAB/Simulink developers to interact with a Digital Twin of a Floating Oscillating Surge Wave Energy Device (FOSWEC).  Information about the FOSWEC device being simulated in the Digital Twins included in this repo and the web interface can be found [here](#digital-twin-description).
-
-The web based platform aims to serve a mix of different users with varying experience and dynamics modeling skill levels, from someone who wants to get familiar with realtime Digital Twin simulations to someone who wants to test their custom controller model but doesn't have the toolboxes or realtime [Speedgoat](https://www.speedgoat.com/speedgoat-solutions?utm_term=&utm_campaign=Dynamic+Ad+Groups&utm_source=adwords&utm_medium=ppc&hsa_acc=6520550235&hsa_cam=887795487&hsa_grp=43284490926&hsa_ad=208143357041&hsa_src=g&hsa_tgt=aud-387379185812:dsa-295317350131&hsa_kw=&hsa_mt=b&hsa_net=adwords&hsa_ver=3&gclid=EAIaIQobChMIiNj__c3F8wIVBQutBh1JvQioEAAYAiAAEgJZsfD_BwE) hardware.
-
-#### New Users
-
-If you're someone who is wanting to get familiar with the idea of realtime simulations, FOSWEC's, and digital twins, read the section [below](#web-interface), skip the model upload, and select **Default Control** in the compilation options box in the web UI.  We'd also recommend you read through [this](#digital-twin-description) section of the readme to get a baseline understanding about what's happening in the digital twins.
-
-##### Tutorials
-A video tutorial of how to use the FOSTWIN Digital Twin web interface can be found [here](https://digitalops.sandia.gov/Mediasite/Play/5ac7786567ef4e7fa6f77b385a2781ef1d).
-
-If you'd prefer a tutorial walk through using the system in PDF format download and use the PDF file [here](FOSTWIN%20Beginners%20Guide.pdf).
-
-#### Experienced Users
-
-If you're up to speed with the web interface and are ready to work on developing your own Controller model, we recommend you skip to to [Developing A Controller](#developing-a-controller) & read [this](#digital-twin-description) section of the readme.  
-
-
-#### Additional resources
 If you would like more information about the FOSWEC device please check out the following resources.
 - https://dx.doi.org/10.15473/1782587
 - https://doi.org/10.1016/j.energy.2021.122485
 
-# Top Level Model
-![](images/FOSTWIN.png)
+From here onwards, we will refer to the digital twin of the FOSWEC as the FOSTWIN.
 
-
-# Running FOSTWIN locally
-
-To run the FOSTWIN digital twin locally follow the following steps
+# Running the FOSTWIN locally
+To run the FOSTWIN locally, follow these steps:
 1. Clone the FOSTWIN repository [here](https://github.com/PMEC-OSU/FOSTWIN) (this repo).
-2. OPTIONAL STEPS IF WANTING TO RUN THE WECSIM TWIN LOCALLY:  
-   1. Install version 5.0 of WEC-Sim if not already installed [here](https://github.com/WEC-Sim/WEC-Sim/releases)
-      - This version of the digital twin is only compatible with version 5.0 of WEC-Sim
-      - Check back for future updates of the FOSTWIN compatible with the latest version of WEC-Sim as new versions are released 
-3. Modify `initModels_GUI.m` in the FOSTWIN repository
-   - IF OPTIONAL WECSIM STEP COMPLETED ABOVE: 
-     - Change `wecSimPath` near the top of the `initModels_GUI` script to reflect the source directory of your installed WEC-Sim installation
-     - When running WECSim as the twin for the first time locally, uncomment the `modifyWECSim_Lib_Frames` line at line 26 of the `initModels_GUI` script.  This allows wecSim to run in our system.
+2. OPTIONAL STEPS IF WANTING TO RUN THE WECSIM TWIN LOCALLY (you can skip this step for the SID version):  
+   1. Install version 5.0 of [WEC-Sim](https://github.com/WEC-Sim/WEC-Sim/releases). This is the only version currently supported.
+3. Modify `initModels_GUI.m` in the FOSTWIN repository as desired:
    - Choose simulation type either `NonRealTime` or `SingleSpeedgoat`
    - Set wave height and wave periods for your simulation
    - Set initial values for inputs to your control model
@@ -146,28 +112,24 @@ To run the FOSTWIN digital twin locally follow the following steps
    - Set wave type of `regular` or `irregular`
    - Specify the control model name
    - Choose either the `WECSim` or `systemID` TWIN model
-   - If using a speedgoat for realtime simulation set the name of your target device
+   - If using a Speedgoat for realtime simulation, set the name of your target device
+   - IF OPTIONAL WECSIM STEP COMPLETED ABOVE: 
+     - Change `wecSimPath` near the top of the `initModels_GUI` script to reflect the source directory of your installed WEC-Sim installation
+     - When running WECSim as the twin for the first time locally, uncomment the `modifyWECSim_Lib_Frames` line of the `initModels_GUI` script.
 4. Run `initModels_GUI.m` to get started
-   - If running on speedgoat hardware, run starttarget.m to start the simulation
-   - When simulation is completed run FOSTWINctrlPost to create the output data
-5. Results of the simulation are located in simulation-data.mat automatically at the end of the simulation when running in non-realtime.
+5. Results of the simulation are saved to simulation-data.mat in the non-realtime environment.
 
+# Top Level Model
+The top level model is where the controller and the FOSTWIN model simulation are joined:
+![](images/FOSTWIN.png)
 
+# Developing a custom controller
 
-
-# Developing A Controller
-
-To develop a controller for the FOSTWIN digital twin, we've included a nearly blank model called `ctrlStarter.slx`, that we highly recommend you start out with (also feel free to start with the provided `defaultCtrlModel`).  This nearly blank controller simply has the required inports and outports to allow it to be dropped into the Top Level model. Without the correct number of inports and outports (as defined in the starter model), the uploaded control model will not be able to be used through the web platform. 
-
-Further, the provided inports and outports have the proper bus type associated with it.  If your controller doesn't use the same bus definitions (defined in `initModels_GUI.m`) then it will be unable to compile/ operate properly through the remote system/ when we run the test cases locally to select **N** winners.
-
-Here's what it looks like in Simulink:
+We recommend you start with the controller template model `ctrlStarter.slx`. The `ctrlStarter.slx` model has no actual control built in, but defines all relevant controller input and output bus structures. This includes up to four parameters that can be tuned live via the web-based system. If your controller does not have any (or fewer than four) tunable parameters, simply terminate the unused parameters.
 
 ![](/images/ctrlStarter.png)
 
-As you can see, the starter has no actual control built in, further the position values from the flaps simulated in the digital twin are terminated, and the current on the Aft and Bow flaps are fed with a constant `0` value so it wouldn't be good to use as is. If your controller doesn't have any parameters that would need to be updated when starting (or restarting) a simulation, or wouldn't need to be changed while the simulation is running, just terminate the inports and don't connect the outports to any wires in your controller model.  
-
-We've also provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system, this model may be helpful to examine to get familiar with using the inports for control parameters and outports for logging data signals. 
+We have also provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system. This model may be helpful to get familiar with using the controller inputs (aft and bow flap positions), the control parameters, and the outputs for logging of data signals. 
 
 ![](/images/defaultCtrl.png)
 
