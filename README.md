@@ -4,19 +4,11 @@
 
 - [Overview](#overview)
 - [Control competition](#control-competition)
-- [Participate in competition](#participate-in-competition)
-- [Top level model](#top-level-model)
+- [Model outline](#model-outline)
 - [Running the FOSTWIN locally](#running-the-fostwin-locally)
-- [Developing a custom controller](#developing-a-custom-controller)
-- [Web interface](#web-interface)
-- [Digital twin description](#digital-twin-description)
-  - [Control model](#control-model)
-  - [WEC-Sim model](#wec-sim-model)
-  - [System identification model](#system-identification-model)
-
+- [Using the web interface](#using-the-web-interface)
 
 # Overview
-
 In a joint effort between [Sandia National Labs (SNL)](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [Oregon State University (OSU)](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co), we present this open source repository to interact with a digital twin of the Floating Oscillating Surge Wave Energy Device (FOSWEC). This repository is complemented by a web-based platform that gives simple and convenient access to the tools provided here. A video tutorial of how to use this web interface can be found [here](https://digitalops.sandia.gov/Mediasite/Play/5ac7786567ef4e7fa6f77b385a2781ef1d). 
 
 If you would like more information about the FOSWEC device please check out the following resources.
@@ -26,7 +18,85 @@ If you would like more information about the FOSWEC device please check out the 
 From here onwards, we will refer to the digital twin of the FOSWEC as the FOSTWIN.
 
 # Control competition
-For information on the timeline of a currently on-going control competition and the reward, please take a look [here](https://pmec-osu.github.io/FOSTWIN/).
+For information on an exciting FOSTWIN control competition opportunity, please take a look [here](https://pmec-osu.github.io/FOSTWIN/).
+
+# Model outline
+
+## Top Level Model
+
+There are two digital twin models of the FOSWEC to choose from:  
+- The first is based on the open source code [WEC-Sim](https://wec-sim.github.io/WEC-Sim/master/index.html).  
+- The second is a system identification model based on experimental data collected from the actual FOSWEC device during a test campaign at OSU detailed [here](https://dx.doi.org/10.15473/1782587).  Further information from this test campaign can be found in the paper located [here](https://doi.org/10.1016/j.energy.2021.122485).
+
+Each version of the digital twin includes the plant model and a control model. The plant model is intended to be fixed, however the control model is meant to be experimented with. There is a default control model to get started with. This model can easily be replaced with a custom control model by the user.
+
+The top level model is where the power absorption controller and the twin models are joined:
+![](images/FOSTWIN.png)
+
+## WEC-Sim model
+
+The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC. The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory. This includes matching the water depth and mooring, which was a taut system.
+![](/images/WECSim.png)
+
+## System identification model
+
+The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory. System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system. Input is the motor torque and output is motor position.  
+![](/images/systemID.png)
+
+The wave input for the SID model is created by taking the wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
+
+## Absorption controller
+
+The absorption controller computes a forcing demand to extract wave power from the device. We have provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system. This model will helpful to get familiar with using the controller inputs (aft and bow flap positions), the control parameters, and the outputs for logging of data signals. 
+
+![](/images/defaultCtrl.png)
+
+To develop a custom controller, we recommend that you start with the controller template model `ctrlStarter.slx`. The `ctrlStarter.slx` model has no actual control built in, but defines all relevant controller input and output bus structures. This includes up to four parameters that can be tuned live via the web-based system. If your controller does not have any (or fewer than four) tunable parameters, simply terminate the unused parameters.
+
+![](/images/ctrlStarter.png)
+
+## Power signs
+
+Mechanical power absorbed from the waves is negative. Electrical losses (I2R) are always positive. The net power is the sum of the mechanical power and the I2R losses. A negative net power means net power is being absorbed from the waves. A positive net power means the I2R losses outweigh the absorbed wave power. For the [FOSTWIN control competition](https://pmec-osu.github.io/FOSTWIN/), optimizing net power means obtaining a **maximum negative value** of the net power mean over the sea state.
+
+## Controller State
+
+The model contains a supervisory state machine. This state machines ensures that maximum current constraints are not violated and catches controller instabilities.
+
+![](images/stateCtrl.png)
+
+There are 6 states in this state machine:
+1. Undefined - a non-state to handle edge cases
+2. Init - starting point 
+3. Normal - main absorption controller operating without issues
+4. Stabilizing - stabilize the system after an excessive motor current
+5. Safe Damping - safe condition, where the absorption control is taken over by a default (and known to be stable) damping controller
+6. Fault - absorption controller deactivated
+
+The state machine operation is shown in the Simulink State Flow chart below. The system generally remains in the Normal state, unless a large motor current signal is detected. This detection is based on a low-pass filtered version of the instantaneous current, such that a very short current spike does not trigger an error condition. If an excessive current signal is detected, the state machine seeks to stabilize the system and return to the Normal operating state. Continued violation of the motor current limit will trigger the Fault state, where the absorption controller remains deactivated.
+
+![](images/stateCtrlChart.png)
+
+## Tunable control parameters
+
+The web interface (see description below) allows for changing some control parameters while the model is being run on a real-time Speedgoat system. An example of tunable parameters are the aft and bow damping applied in the `defaultCtrlModel`. Varying these parameters, which are mapped to `ctrlParam1` and `ctrlParam2`, allows manipulating the damping force applied to the motor as the simulation is running. This feature can be used to develop a first quick sense for where the optimum damping values may lie. 
+
+## Control signals 
+
+On the right-hand side of the `defaultCtrlModel` and `ctrlStarter` models, you will see that there are always 2 outputs. One of these output busses is essential for the interaction between the controller and the twin, containing the motor current setpoints `curAft` and `curBow`. The second output bus is used for logging and sending data to the charts on the web interface.
+
+There is no requirement to make use of the extra `ctrlSignals` output bus; these signals are informational only. However, this bus must still exist to successfully compile the controller when running via the web interface. The four bus signals are returned in the full resolution data, and populate the very bottom chart on the web platform. Using the [Edit Control Display](#edit-control-display) button, you can rename the signals on the chart to make interpreting the data easier. If not making use of the four informational control signals, we recommend wiring a constant 0 block to suppress Simulink warnings.
+
+
+## Wave types
+
+There are provisions for running regular and irregular wave conditions. Irregular waves have a JONSWAP spectrum input.
+
+## Aft vs Bow
+
+The bow flap is that facing the incoming waves first.
+
+<img style="height:350px;margin-bottom:10px;" src="images/real-device.png" align="middle">
 
 # Running the FOSTWIN locally
 To run the FOSTWIN locally, follow these steps:
@@ -48,100 +118,58 @@ To run the FOSTWIN locally, follow these steps:
 4. Run `initModels_GUI.m` to get started
 5. Results of the simulation are saved to simulation-data.mat in the non-realtime environment.
 
-# Top Level Model
-The top level model is where the controller and the FOSTWIN model simulation are joined:
-![](images/FOSTWIN.png)
+# Using the web interface
 
-# Developing a custom controller
+The FOSTWIN web interface allows developers to test their control code on a real-time system. Via our web portal, you can gain access to a Speedgoat real-time target machine, which can execute compiled Simulink code for control applications.
 
-We recommend you start with the controller template model `ctrlStarter.slx`. The `ctrlStarter.slx` model has no actual control built in, but defines all relevant controller input and output bus structures. This includes up to four parameters that can be tuned live via the web-based system. If your controller does not have any (or fewer than four) tunable parameters, simply terminate the unused parameters.
+## Signing up
 
-![](/images/ctrlStarter.png)
+Signup instructions for the web interface are provided [here](https://pmec-osu.github.io/FOSTWIN/). 
 
-We have also provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system. This model may be helpful to get familiar with using the controller inputs (aft and bow flap positions), the control parameters, and the outputs for logging of data signals. 
+## Scheduling time
 
-![](/images/defaultCtrl.png)
+After signing up, you are first presented with a dashboard to select dates to use the system.  When you select a given date, you have reserved that date from 00:00:00 -> 23:59:59 in `US/Central` time (Midnight to Midnight).
 
-### Tunable control parameters
-
-The web interface allows for changing some control parameters while the model is being run on the real-time Speedgoat system. An example of tunable parameters are the aft and bow damping applied in the `defaultCtrlModel`. Varying these parameters, which are mapped to `ctrlParam1` and `ctrlParam2`, allows manipulating the damping force applied to the motor as the simulation is running. This feature can be used to develop a first quick sense for where the optimum damping values may lie. 
-
-### Control signals 
-
-On the right-hand side of the `defaultCtrlModel` and `ctrlStarter` models, you will see that there are always 2 outputs. One of these output busses is essential for the interaction between the controller and the twin, containing the motor current setpoints `curAft` and `curBow`. The second output bus is used for logging and sending data to the charts on the web interface.
-
-There is no requirement to make use of the extra `ctrlSignals` output bus; these signals are informational only. However, this bus must still exist to successfully compile the controller when running via the web interface. The four bus signals are returned in the full resolution data, and populate the very bottom chart on the web platform. Using the [Edit Control Display](#edit-control-display) button, you can rename the signals on the chart to make interpreting the data easier. If not making use of the four informational control signals, we recommend wiring a constant 0 block to suppress Simulink warnings.
-
-## Controller State
-
-The model contains a supervisory state machine. This state machines ensures that maximum current constraints are not violated and catches controller instabilities.
-
-![](images/stateCtrl.png)
-
-There are 6 states in this state machine:
-1. Undefined - a non-state to handle edge cases
-2. Init - starting point 
-3. Normal - main absorption controller operating without issues
-4. Stabilizing - stabilize the system after an excessive motor current
-5. Safe Damping - safe condition, where the absorption control is taken over by a default (and known to be stable) damping controller
-6. Fault - absorption controller deactivated
-
-The state machine operation is shown in the Simulink State Flow chart below. The system generally remains in the Normal state, unless a large motor current signal is detected. This detection is based on a low-pass filtered version of the instantaneous current, such that a very short current spike does not trigger an error condition. If an excessive current signal is detected, the state machine seeks to stabilize the system and return to the Normal operating state. Continued violation of the motor current limit will trigger the Fault state, where the absorption controller remains deactivated.
-
-![](images/stateCtrlChart.png)
-
-
-# Web interface
-
-Google chrome is the the recommended browser for best performance. If it is difficult to see everything inside of the boxes in the web interface, please zoom out to improve the visual quality.  
-
-## Time scheduling
-
-When you enroll in the competition, you are first presented with a dashboard to select dates to use the system.  When you select a given date, you have reserved that date from 00:00:00 -> 23:59:59 in `US/Central` time (Midnight to Midnight).
-
-1. When your turn on the system has arrived, the date scheduling dashboard's "To FOSTWIN Dashboard" button will become enabled, and clicking it will take you to the web interface described in the following sub-sections.  
-2. At about 10 minutes prior to the end of your scheduled time an alert will be raised from the website.  At this point, you should stop your simulation and download your data.
+1. When your turn on the system has arrived, the "To FOSTWIN Dashboard" button in the scheduling dashboard will become enabled. Clicking this button takes you to the web interface described in the following sub-sections.  
+2. At about 10 minutes prior to the end of your scheduled time an alert will be raised from the website. At this point, you should stop your simulation and download your data.
 3. At about 5 minutes prior to the end of your scheduled time, the system will be automatically stopped, then reset. This means any non-saved simulation data will be lost.
 4. At the end of your turn, you will be redirected to the date selection dashboard where you can schedule more time on the system if desired.
    
 **Note**: When your turn arrives, the `STATUS` box in the middle of the FOSTWIN dashboard (with TET and Speedgoat info underneath) should say `System Not In Use`. If this is not the case, please press the `Finished With System` button to reset the system.  
 
-### Power signs
+## Compilation
 
-For mechanical power, power absorbed from the waves is negative. Electrical losses (I2R) are always positive. The net power is the sum of the mechanical power and the I2R losses. A negative net power means net power is being absorbed from the waves. A positive net power means the I2R losses outweigh the absorbed wave power. For the competition, optimizing net power means obtaining a **maximum negative value** of the net power mean over the sea state.
+Compilation invokes a range of Simulink real-time tools, which first translate Simulink code into C/C++ code. This C/C++ code is then compiled to form an executable that can be run on the Speedgoat real-time target.
 
-### Compilation
-
-The options shown in the below box are all parameters that cannot be changed without recompiling the code that is executed on the Speedgoat hardware. To change any of these options, stop any running simulation, and then press the `Start Compilation!` button. As the project compiles, the Compilation Report box directly to the right of the options will start to output compilation information. Depending on the length of simulation requested, this compilations could take a few minutes.
+The options shown in the below box are all parameters that cannot be changed without recompiling. To change any of these options, stop any running simulation, and then press the `Start Compilation!` button. As the project compiles, the Compilation Report box directly to the right of the options will start to output compilation information. Depending on the length of simulation requested, this compilations could take a few minutes.
 
 ![](images/compilation.png)
 
 **COMPILATION COMPLETE WILL BE RENDERED AT THE END OF THE COMPILATION REPORT INDICATING THE SYSTEM IS READY TO BE STARTED**
 
-Checking the `Set To Competition Mode` box simply changes the `Twin Type` to `SystemID`, and sets the wave conditions as defined above in the [competition rules](#rules)
+Checking the `Set To Competition Mode` box changes the `Twin Type` to `SystemID`, and sets the wave conditions as defined in the FOSTWIN control competition rules [here](https://pmec-osu.github.io/FOSTWIN/).
 
+## Control parameters
 
-### Control parameters
-
-When `Start FOSTWIN` is pressed, the initial values for the control parameters will be taken from the relevant sliders. Our default controller uses two control parameters, the aft and the bow damping. "Param3" and "Param4" are not used for this default controller, but are available for the use in custom controllers. More information concerning the control parameters and uploading a custom controller is [here](#developing-a-controller).
+When `Start FOSTWIN` is pressed, the initial values for the control parameters will be taken from the relevant sliders. Our default controller uses two control parameters, the aft and the bow damping. "Param3" and "Param4" are not used for this default controller, but are available for the use in custom controllers. 
 
 ![](images/ctrlparams.png)
 
-#### Wave height
+## Wave height
 
-When the twin type is chosen as `SystemID`, you can change the wave height while the simulation is running. When the twin type is `WECSim`, the wave height is fixed to the value chosen at compile time. This limitation is due to the way in which the wave excitation force is calculated within `WECSim`. More information on the two twin types is provided [here](./DigitalTwins.md)
+When the twin type is chosen as `SystemID`, you can change the wave height while the simulation is running. When the twin type is `WECSim`, the wave height is fixed to the value chosen at compile time. This limitation is due to the way in which the wave excitation force is calculated within `WECSim`. 
 
-### Custom controller model upload
+## Custom controller model upload
 
 To upload a model, select the desired model file in the explorer and then click upload. Only .slx files are allowed. When uploading a new model, please make sure that no model is currently running or compiling. If you do not yet have a custom control model, you can simply select Default Control in the [Compilation Options](#compilation). 
 
 ![](images/upload.png)
 
-### System control buttons
+## System control buttons
 These buttons control the overal system behavior, with details given below.
 ![](images/systemcontrol.png)
 
-#### Modify control display (**optional**)
+### Modify control display (**optional**)
 
 The Modify Control Display button gives you the following options:
 ![](images/editctrldisp.png)
@@ -152,11 +180,11 @@ The Param options for the rest of the dialogue box are for setting names, ranges
 
 Pressing the "Update" button will save your changes and refresh the main page.
 
-#### Start/ Stop FOSTWIN
+### Start/ Stop FOSTWIN
 
 These buttons start and stop the realtime simulation on the Speedgoat real-time. The Stop button allows you to terminate the simulation before the allocated run time. Note that you can only prepare and download data once the simulation is completed, either after the full run time, or until the Stop button was pressed.
 
-#### Prepare & Download Data (and data definitions)
+### Prepare & Download Data (and data definitions)
 
 Pressing this button prepares high temporal resolution (1 kHz for SID) data for subsequent post processing. For long simulation times, this data preparation may take a few minutes. Once complete, a .mat file will be available in your downloads.
 
@@ -183,53 +211,19 @@ The logged data includes:
   - `state` - State values from ctl state machine
   - `waveH_rt` - waveH values across simulation - can be changed in realtime mode with `systemID` twin
 
-When running locally, the custom output from WECsim is also available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals in our custom logging system are available.
+When running locally, the custom output from WECsim is also available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals are available.
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
 
-#### Finished with system
+### Finished with system
 
 This button only needs to be pressed once when you are ready to sign out of the system. This button resets the remote host machine to be ready for the next user. Note that this button clears all data from the host machine, including any simulation data you have not yet downloaded.
 
-### Ocean Scale
+## Ocean Scale
 
 We have used an indicative scale of 1:33 to scale up the tank-scale wave parameters. This may be helpful for developers more familiar with ocean-scale design values. These ocean-scale values are not used anywhere in the simulation and are for guidance only. 
 
-# Digital twin description
+## Browser support
 
-This section of the document briefly outlines the FOSWEC digital twin implementations.
-
-### Model types
-
-There are two digital twin models of the FOSWEC to choose from:  
-- The first is based on the open source code [WEC-Sim](https://wec-sim.github.io/WEC-Sim/master/index.html).  
-- The second is a system identification model based on experimental data collected from the actual FOSWEC device during a test campaign at OSU detailed [here](https://dx.doi.org/10.15473/1782587).  Further information from this test campaign can be found in the paper located [here](https://doi.org/10.1016/j.energy.2021.122485).
-
-### Model overview
-
-Each version of the digital twin includes the plant model and a control model. The plant model is intended to be fixed, however the control model is meant to be experimented with. There is a default control model to get started with. This model can easily be replaced with a custom control model by the user.
-
-### Wave types
-
-Currently there are provisions for running regular and irregular wave conditions.  Irregular waves have a JONSWAP spectrum input.
-
-## WEC-Sim model
-
-The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC. The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory. This includes matching the water depth and mooring, which was a taut system.
-![](/images/WECSim.png)
-
-## System identification model
-
-The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory. System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system. Input is the motor torque and output is motor position.  
-![](/images/systemID.png)
-
-The wave input for the SID model is created by taking the wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
-
-##### Aft vs Bow
-
-The bow flap is that facing the incoming waves first.
-
-<img style="height:350px;margin-bottom:10px;" src="images/real-device.png" align="middle">
-
-
+We recommend using Google chrome for best performance. If it is difficult to see everything inside of the boxes in the web interface, please zoom out to improve the visual quality. 
 
