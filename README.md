@@ -30,7 +30,7 @@ There are two digital twin models of the FOSWEC to choose from:
 
 Each version of the digital twin includes the plant model and a control model. The plant model is intended to be fixed, however the control model is meant to be experimented with. There is a default control model to get started with. This model can easily be replaced with a custom control model by the user.
 
-The top level model is where the power absorption controller and the twin models are joined:
+The top level model is where the power absorption controller and the plant models are joined:
 ![](images/FOSTWIN.png)
 
 ## WEC-Sim model
