@@ -2,10 +2,9 @@
 
 <img style="height:350px;margin-bottom:10px;" src="images/FOSWEC2_HWRL.png" align="right">
 
-
-- [Competition](#competition)
+- [Overview](#overview)
+- [Control competition](#control-competition)
 - [Participate in competition](#participate-in-competition)
-- [Getting started](#getting-started)
 - [Top level model](#top-level-model)
 - [Running the FOSTWIN locally](#running-the-fostwin-locally)
 - [Developing a custom controller](#developing-a-custom-controller)
@@ -16,8 +15,18 @@
   - [System identification model](#system-identification-model)
 
 
-# Competition
-For information on the timeline of the competition and the reward, checkout the page [here](https://pmec-osu.github.io/FOSTWIN/).
+# Overview
+
+In a joint effort between [Sandia National Labs (SNL)](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [Oregon State University (OSU)](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co), we present this open source repository to interact with a digital twin of the Floating Oscillating Surge Wave Energy Device (FOSWEC). This repository is complemented by a web-based platform that gives simple and convenient access to the tools provided here. A video tutorial of how to use this web interface can be found [here](https://digitalops.sandia.gov/Mediasite/Play/5ac7786567ef4e7fa6f77b385a2781ef1d). 
+
+If you would like more information about the FOSWEC device please check out the following resources.
+- https://dx.doi.org/10.15473/1782587
+- https://doi.org/10.1016/j.energy.2021.122485
+
+From here onwards, we will refer to the digital twin of the FOSWEC as the FOSTWIN.
+
+# Control competition
+For information on the timeline of a currently on-going control competition and the reward, please take a look [here](https://pmec-osu.github.io/FOSTWIN/).
 
 ## Rules
 The following rules apply to the control competition:
@@ -63,16 +72,6 @@ When you enroll in the competition, you are first presented with a dashboard to 
 4. At the end of your turn, you will be redirected to the date selection dashboard where you can schedule more time on the system if desired.
    
 **Note**: When your turn arrives, the `STATUS` box in the middle of the FOSTWIN dashboard (with TET and Speedgoat info underneath) should say `System Not In Use`. If this is not the case, please press the `Finished With System` button to reset the system.  
-
-# Getting started
-
-In a joint effort between [Sandia National Labs (SNL)](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/), [Oregon State University (OSU)](https://wave.oregonstate.edu/), and [Evergreen Innovations (EGI)](https://www.evergreeninnovations.co), we present this open source repository to interact with a digital twin of the Floating Oscillating Surge Wave Energy Device (FOSWEC). This open-source repository is complemented by a web-based platform that gives simple and convenient access to the tools provided here. A video tutorial of how to use this web interface can be found [here](https://digitalops.sandia.gov/Mediasite/Play/5ac7786567ef4e7fa6f77b385a2781ef1d). 
-
-If you would like more information about the FOSWEC device please check out the following resources.
-- https://dx.doi.org/10.15473/1782587
-- https://doi.org/10.1016/j.energy.2021.122485
-
-From here onwards, we will refer to the digital twin of the FOSWEC as the FOSTWIN.
 
 # Running the FOSTWIN locally
 To run the FOSTWIN locally, follow these steps:
@@ -222,11 +221,6 @@ When running locally, the custom output from WECsim is also available, and will 
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
 
-##### Aft vs Bow
-
-The bow flap is that facing the incoming waves first.
-<img style="height:350px;margin-bottom:10px;" src="images/real-device.png" align="middle">
-
 #### Finished with system
 
 This button only needs to be pressed once when you are ready to sign out of the system. This button resets the remote host machine to be ready for the next user. Note that this button clears all data from the host machine, including any simulation data you have not yet downloaded.
@@ -264,5 +258,12 @@ The system identification model is based off of experimental test data collected
 ![](/images/systemID.png)
 
 The wave input for the SID model is created by taking the wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
+
+##### Aft vs Bow
+
+The bow flap is that facing the incoming waves first.
+
+<img style="height:350px;margin-bottom:10px;" src="images/real-device.png" align="middle">
+
 
 
