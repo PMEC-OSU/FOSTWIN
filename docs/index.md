@@ -56,7 +56,7 @@ To participate in the competition, there's just a few steps you'll need to take:
 
 1. Enroll in the FOSTWIN control competition [here](https://fostwin-signup.evergreeninnovations.co/)
 2. Get familiar with the FOSWEC Digital Twin and the associated web interface
-3. Develop a custom controller as a Simulink model & run in real-time through the provided web platform
+3. Develop a custom controller as a Simulink model & run the model in real-time through the provided web platform
 4. Collect & submit your results from the real-time simulation(s)
 
 To participate in this competition, you must have a few pre-requisites:
@@ -68,7 +68,7 @@ To participate in this competition, you must have a few pre-requisites:
 
 ### Getting familiar <!-- omit in toc -->
 
-To aid both the WEC development community and new users interested in learning about real-time control of digital twins, we've created this [open source repository](https://github.com/PMEC-OSU/FOSTWIN). The repo contains all code and instructions needed to run a FOSWEC digital twin simulation and a provided simple controller locally. You can then develop your enhanced custom controller locally. Via a web interface, you can upload your custom controller and have it execute in real-time on our remote Speedgoat set up. This gives you the opportunity to test the real-time behavior of your code, without requiring your own real-time hardware.
+To aid both the WEC development community and new users interested in learning about real-time control of digital twins, we've created this [open source repository](https://github.com/PMEC-OSU/FOSTWIN). The repo contains all the code and instructions needed to run a FOSWEC digital twin simulation and a simple controller locally. You can then develop your enhanced custom controller locally. Via a web interface, you can upload your custom controller and execute your controller in real-time on our remote Speedgoat. This gives you the opportunity to test the real-time behavior of your code, without requiring your own real-time hardware.
 
 To set the open-source code into context, we plan to host a variety of public workshops to provide information about real-time dynamics modeling, developing controllers for real-time applications, and point out the challenges and benefits of using real-time controllers with digital twins.
 
@@ -86,9 +86,9 @@ The damping settings for this controller can be adjusted live (as the simulation
 
 We encourage users to try this right away - [an account to the web interface](https://fostwin-signup.evergreeninnovations.co/) can be active within minutes.
 
-Using our simple controller example as a starting point, you can develop your custom controller. This can be done entirely locally (on your own PC), and tested in real-time mode via our web interface. One unique benefit of real-time mode is the ability to change controller tuning parameters while the model is running. Via the web platform you can experiment with different values for tunable parameters like the damping setting applied.
+Using our simple controller example as a starting point, you can develop your custom controller. This can be done entirely locally (on your own PC), and tested in real-time mode via our web interface. One unique benefit of real-time mode is the ability to change controller tuning parameters while the model is running. For example, you can tune the damping setting and watch the "live" effect on your system.
 
-While working with the web interface, you'll get charts of the data flowing throughout the system. You can also to download your simulation results for subsequent post-processing in MATLAB.
+The web interface provides live charts of relevant system signals. You can also download your simulation results for subsequent post-processing in MATLAB.
 
 ![](images/dashboard-charts.png)
 
@@ -98,8 +98,6 @@ You must submit your entry as two files:
 
 - the `.mat` file containing the results of running you controller on the digital twin (via the web-based interface)
 - the `.slx` file for your controller
-
-Details concerning the submission process will be updated here closer to the competition close.
 
 
 
