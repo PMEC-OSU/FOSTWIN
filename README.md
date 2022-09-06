@@ -31,23 +31,26 @@ There are two digital twin models of the FOSWEC to choose from:
 Each version of the digital twin includes the plant model and a control model. The plant model is intended to be fixed, however the control model is meant to be experimented with. There is a default control model to get started with. This model can easily be replaced with a custom control model by the user.
 
 The top level model is where the power absorption controller and the plant models are joined:
+
 ![](images/FOSTWIN.png)
 
 ## WEC-Sim model
 
 The WEC-Sim model uses a simplified geometry and WAMIT output to provide a time domain model of the FOSWEC. The simulation is set up to replicate the test conditions experienced during testing at the O.H. Hinsdale Wave Research Laboratory. This includes matching the water depth and mooring, which was a taut system.
+
 ![](/images/WECSim.png)
 
 ## System identification model
 
-The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory. System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system. Input is the motor torque and output is motor position.  
+The system identification model is based off of experimental test data collected by the FOSWEC at the O.H. Hinsdale Wave Research Laboratory. System identification techniques from MATLAB were used to establish a multiple input multiple output (MIMO) admittance model of the system. Input is the motor torque and output is motor position. 
+
 ![](/images/systemID.png)
 
 The wave input for the SID model is created by taking the wave characteristics and using the results from WAMIT to create an excitaion force input for the model.
 
 ## Absorption controller
 
-The absorption controller computes a forcing demand to extract wave power from the device. We have provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system. This model will helpful to get familiar with using the controller inputs (aft and bow flap positions), the control parameters, and the outputs for logging of data signals. 
+The absorption controller computes a forcing demand to extract wave power from the device. We have provided a `defaultCtrlModel` that creates a simple velocity proportional damping control system. This model will be helpful to get familiar with using the controller inputs (aft and bow flap positions), the control parameters, and the outputs for logging of data signals. 
 
 ![](/images/defaultCtrl.png)
 
@@ -55,11 +58,21 @@ To develop a custom controller, we recommend that you start with the controller 
 
 ![](/images/ctrlStarter.png)
 
+## Tunable control parameters
+
+The web interface (see description below) allows for changing some control parameters while the model is being run on a real-time Speedgoat system. An example of tunable parameters are the aft and bow damping applied in the `defaultCtrlModel`. Varying these parameters, which are mapped to `ctrlParam1` and `ctrlParam2`, allows manipulating the damping force applied to the motor as the simulation is running. This feature can be used to develop a first quick sense for where the optimum damping values may lie. 
+
+## Control signals 
+
+On the right-hand side of the `defaultCtrlModel` and `ctrlStarter` models, you will see that there are always 2 outputs. One of these output busses is essential for the interaction between the controller and the twin, containing the motor current setpoints `curAft` and `curBow`. The second output bus is used for logging and sending data to the charts on the web interface.
+
+There is no requirement to make use of the extra `ctrlSignals` output bus; these signals are informational only. However, this bus must still exist to successfully compile the controller when running via the web interface. The four bus signals are returned in the full resolution data, and populate the very bottom chart on the web platform. If not making use of the four informational control signals, we recommend wiring a constant 0 block to suppress Simulink warnings.
+
 ## Power signs
 
-Mechanical power absorbed from the waves is negative. Electrical losses (I2R) are always positive. The net power is the sum of the mechanical power and the I2R losses. A negative net power means net power is being absorbed from the waves. A positive net power means the I2R losses outweigh the absorbed wave power. For the [FOSTWIN control competition](https://pmec-osu.github.io/FOSTWIN/), optimizing net power means obtaining a **maximum negative value** of the net power mean over the sea state.
+Mechanical power absorbed from the waves is associated with a negative sign. Electrical losses (I2R) are always positive. The net power is the sum of the mechanical power and the I2R losses. A negative net power means net power is being absorbed from the waves. A positive net power means the I2R losses outweigh the absorbed wave power. For the [FOSTWIN control competition](https://pmec-osu.github.io/FOSTWIN/), optimizing net power means obtaining a **maximum negative value** of the net power mean over the sea state.
 
-## Controller State
+## Supervisory controller
 
 The model contains a supervisory state machine. This state machines ensures that maximum current constraints are not violated and catches controller instabilities.
 
@@ -73,19 +86,9 @@ There are 6 states in this state machine:
 5. Safe Damping - safe condition, where the absorption control is taken over by a default (and known to be stable) damping controller
 6. Fault - absorption controller deactivated
 
-The state machine operation is shown in the Simulink State Flow chart below. The system generally remains in the Normal state, unless a large motor current signal is detected. This detection is based on a low-pass filtered version of the instantaneous current, such that a very short current spike does not trigger an error condition. If an excessive current signal is detected, the state machine seeks to stabilize the system and return to the Normal operating state. Continued violation of the motor current limit will trigger the Fault state, where the absorption controller remains deactivated.
+The state machine operation is shown in the Simulink State Flow chart below. The system generally remains in the Normal state, unless a large motor current signal is detected. This detection is based on a low-pass filtered version of the instantaneous current, such that a short current spike does not trigger an error condition. If an excessive current signal is detected, the state machine seeks to stabilize the system and return to the Normal operating state. Continued violation of the motor current limit will trigger the Fault state, where the absorption controller remains deactivated.
 
 ![](images/stateCtrlChart.png)
-
-## Tunable control parameters
-
-The web interface (see description below) allows for changing some control parameters while the model is being run on a real-time Speedgoat system. An example of tunable parameters are the aft and bow damping applied in the `defaultCtrlModel`. Varying these parameters, which are mapped to `ctrlParam1` and `ctrlParam2`, allows manipulating the damping force applied to the motor as the simulation is running. This feature can be used to develop a first quick sense for where the optimum damping values may lie. 
-
-## Control signals 
-
-On the right-hand side of the `defaultCtrlModel` and `ctrlStarter` models, you will see that there are always 2 outputs. One of these output busses is essential for the interaction between the controller and the twin, containing the motor current setpoints `curAft` and `curBow`. The second output bus is used for logging and sending data to the charts on the web interface.
-
-There is no requirement to make use of the extra `ctrlSignals` output bus; these signals are informational only. However, this bus must still exist to successfully compile the controller when running via the web interface. The four bus signals are returned in the full resolution data, and populate the very bottom chart on the web platform. Using the [Edit Control Display](#edit-control-display) button, you can rename the signals on the chart to make interpreting the data easier. If not making use of the four informational control signals, we recommend wiring a constant 0 block to suppress Simulink warnings.
 
 
 ## Wave types
@@ -161,7 +164,7 @@ When the twin type is chosen as `SystemID`, you can change the wave height while
 
 ## Custom controller model upload
 
-To upload a model, select the desired model file in the explorer and then click upload. Only .slx files are allowed. When uploading a new model, please make sure that no model is currently running or compiling. If you do not yet have a custom control model, you can simply select Default Control in the [Compilation Options](#compilation). 
+To upload a custom controller model, select the desired model file in the explorer and then click upload. Only .slx files are allowed. When uploading a new model, please make sure that no model is currently running or compiling. If you do not yet have a custom control model, you can simply select Default Control in the [Compilation Options](#compilation). 
 
 ![](images/upload.png)
 
@@ -182,7 +185,7 @@ Pressing the "Update" button will save your changes and refresh the main page.
 
 ### Start/ Stop FOSTWIN
 
-These buttons start and stop the realtime simulation on the Speedgoat real-time. The Stop button allows you to terminate the simulation before the allocated run time. Note that you can only prepare and download data once the simulation is completed, either after the full run time, or until the Stop button was pressed.
+These buttons start and stop the realtime simulation on the Speedgoat real-time. The Stop button allows you to terminate the simulation before the allocated run time. Note that you can only prepare and download data once the simulation is completed, either after the full run time, or after the Stop button was pressed.
 
 ### Prepare & Download Data (and data definitions)
 
@@ -190,28 +193,28 @@ Pressing this button prepares high temporal resolution (1 kHz for SID) data for 
 
 The logged data includes:
 - Power
-  - `powerMechAft` - mechanical power generated on aft flap
-  - `powerMechBow` - mechanical power generated on bow flap
-  - `powerMechTotal` - sum of the aft and bow mechanical powers
-  - `powerMechAvg` - Moving average of total mechanical power. Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves. 
-  - `powerI2R` - I2R loss
-  - `powerNet` - `powerMechTotal` - `powerI2R`
-  - `powerNetMean` - running mean of `powerNet` - at the end of the simulation, the last value is the mean calc across the simulation duration.  At each step in the simulation, the num samples denominator is incremented by 1, such that the avg at the start of the simulation is valid for the number of time steps passed.
-  - `powerNetMovingAverage` - Moving average of `powerNet` - Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves.
+  - `powerMechAft`, mechanical power generated on aft flap
+  - `powerMechBow`, mechanical power generated on bow flap
+  - `powerMechTotal`, sum of the aft and bow mechanical powers
+  - `powerMechAvg`, moving average of total mechanical power. Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves. 
+  - `powerI2R`, I2R loss
+  - `powerNet`, defined as `powerMechTotal` - `powerI2R`
+  - `powerNetMean`, running mean of `powerNet`. At the end of the simulation, the last value is the mean calculated across the simulation duration.
+  - `powerNetMovingAverage`, moving average of `powerNet`. Irregular waves are calculated across 60 waves, and regular are calculated across 5 waves.
 - Conditions
-  - `wave` - height (H) and period (T) of the waves simulated
-  - `waveType` - regular or irregular
-  - `Ts` - time step - the rate at witch the Speedgoat executes every step.
-  - `simulationType` - SingleSpeedgoat or NonRealtime
+  - `wave`, height (H) and period (T) of the waves simulated
+  - `waveType`, regular or irregular
+  - `Ts`, the rate at witch the Speedgoat executes every step.
+  - `simulationType`, SingleSpeedgoat or NonRealtime
 - Control Signals
-  - `Aft` - Position and current (signals passed between controller and twin)
-  - `Bow` - Position and current (signals passed between controller and twin)
-  - `ctrlSignals` - 1 through 4 for the 4 custom outputs of the control model (default or custom upload)
-  - `ctrlParams` - 1 through 4 for the 4 custom inputs of the control model (default or custom upload)
-  - `state` - State values from ctl state machine
-  - `waveH_rt` - waveH values across simulation - can be changed in realtime mode with `systemID` twin
+  - `Aft`, Position and current (signals passed between controller and twin)
+  - `Bow`, Position and current (signals passed between controller and twin)
+  - `ctrlSignals`, 1 through 4 for the 4 custom outputs of the control model (default or custom upload)
+  - `ctrlParams`, 1 through 4 for the 4 custom inputs of the control model (default or custom upload)
+  - `state`, State values from supervisory state machine
+  - `waveH_rt`, waveH values across simulation. Can be changed in realtime mode with `systemID` twin
 
-When running locally, the custom output from WECsim is also available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals are available.
+When running locally, the more detailed output from WECsim is also available, and will be included under a `WECSim` key in the logged data object.  When running through the web interface, only the above signals are available.
 
 Both Power and Control Signals data have one point for every time step of the simulation, while the conditions are constant values defined at the start of the simulation.
 
