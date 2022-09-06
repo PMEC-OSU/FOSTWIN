@@ -28,51 +28,6 @@ From here onwards, we will refer to the digital twin of the FOSWEC as the FOSTWI
 # Control competition
 For information on the timeline of a currently on-going control competition and the reward, please take a look [here](https://pmec-osu.github.io/FOSTWIN/).
 
-## Rules
-The following rules apply to the control competition:
-- Use of System Identification (SID) digital twin model only (not WECSim)
-- Must use provided SID admittance (includes drive train dynamics)
-- No changes to be made outside of the control model (FOSTWIN/ctrl/userCtrlModel block)
-- Must be able to run the entire model (including control) in real-time at 1kHz loop rate on our provided Speegoat Baseline target machine
-- Optimize net (mechanical - I2R winding loss) power capture for a JONSWAP (gamma=3.3) sea state with Hs of 0.136 m and Tp of 2.61s for a 300s simulation time
-- Irregular waves seeded with 'default' for the random number generator must be used. In scoring the results, we will evaluate with 5 additional seeds unknown to the developer
-
-If you require any clarification, please email johannes@evergreeninnovations.co.
-
-## Scoring
-
-The following scoring criteria will be evaluated in the order listed, where the subsequent criteria will only be used to determine the winner(s) if there are ties:
-
-1. Mean of net (mechanical - I2R loss) power across the sea states as calculated in the provided SID model
-2. Peak-to-mean ratio of the net power - a lower ratio provides a higher score
-3. Total Harmonic Distortion (THD) of the aft and bow current signals
-4. Computational time
-
-
-# Participate in competition
-
-1. Create an account [here](https://fostwin-signup.evergreeninnovations.co/)
-2. You will be emailed a link to create a password, providing access to a dashboard where you can select dates to use our provided real-time Speedgoat system
-3. Select up to 10 dates at a time (10 active dates, once a day has passed you're able to schedule more time on the system as needed)
-4. Clone this repository
-5. Get familiar with the models and optionally start with the ctrlStarter.slx file provided
-6. Develop your custom controller locally. Most developers will do so in non-realtime mode. However, the various Matlab scripts are set up to work with realtime Speedgoat hardware if you have access to one
-7. On one of the dates you scheduled in Step 3, login to the system, upload your model, set to competition mode, compile, and confirm that your controller can operate at 1 kHz loop rate on a baseline Speedgoat target. 
-   1. Optionally while running your model, test changing control parameters (if your model has any) to optimize the power output over a 300 s simulation. 
-8. Once satisfied, email your controller and your optimized control parameters (if relevant) to johannes@evergreeninnovations.co by **June 16th 2023** 
-9. If your controller is within the top 5 submissions, you'll be emailed with your results and we will arrange for up to $2,000 in travel reimbursement to attend the MASK Basin Workshop in September 2023.
-
-## Scheduling times
-
-When you enroll in the competition, you are first presented with a dashboard to select dates to use the system.  When you select a given date, you have reserved that date from 00:00:00 -> 23:59:59 in `US/Central` time (Midnight to Midnight).
-
-1. When your turn on the system has arrived, the date scheduling dashboard's "To FOSTWIN Dashboard" button will become enabled, and clicking it will take you to the web interface described in the following sub-sections.  
-2. At about 10 minutes prior to the end of your scheduled time an alert will be raised from the website.  At this point, you should stop your simulation and download your data.
-3. At about 5 minutes prior to the end of your scheduled time, the system will be automatically stopped, then reset. This means any non-saved simulation data will be lost.
-4. At the end of your turn, you will be redirected to the date selection dashboard where you can schedule more time on the system if desired.
-   
-**Note**: When your turn arrives, the `STATUS` box in the middle of the FOSTWIN dashboard (with TET and Speedgoat info underneath) should say `System Not In Use`. If this is not the case, please press the `Finished With System` button to reset the system.  
-
 # Running the FOSTWIN locally
 To run the FOSTWIN locally, follow these steps:
 1. Clone the FOSTWIN repository [here](https://github.com/PMEC-OSU/FOSTWIN) (this repo).
@@ -136,9 +91,20 @@ The state machine operation is shown in the Simulink State Flow chart below. The
 ![](images/stateCtrlChart.png)
 
 
-# Web Interface
+# Web interface
 
 Google chrome is the the recommended browser for best performance. If it is difficult to see everything inside of the boxes in the web interface, please zoom out to improve the visual quality.  
+
+## Time scheduling
+
+When you enroll in the competition, you are first presented with a dashboard to select dates to use the system.  When you select a given date, you have reserved that date from 00:00:00 -> 23:59:59 in `US/Central` time (Midnight to Midnight).
+
+1. When your turn on the system has arrived, the date scheduling dashboard's "To FOSTWIN Dashboard" button will become enabled, and clicking it will take you to the web interface described in the following sub-sections.  
+2. At about 10 minutes prior to the end of your scheduled time an alert will be raised from the website.  At this point, you should stop your simulation and download your data.
+3. At about 5 minutes prior to the end of your scheduled time, the system will be automatically stopped, then reset. This means any non-saved simulation data will be lost.
+4. At the end of your turn, you will be redirected to the date selection dashboard where you can schedule more time on the system if desired.
+   
+**Note**: When your turn arrives, the `STATUS` box in the middle of the FOSTWIN dashboard (with TET and Speedgoat info underneath) should say `System Not In Use`. If this is not the case, please press the `Finished With System` button to reset the system.  
 
 ### Power signs
 
