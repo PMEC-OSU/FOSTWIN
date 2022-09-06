@@ -2,16 +2,16 @@
 
 ## The competition
 
-Welcome to the FOSTWIN controller design competition. The purpose of this page is to outline the background, timeline, rules and scoring criteria for this competition. The key competition goal is to develop an effective power absorption controller for a digital twin of the [FOSWEC](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) device. The objective of this controller will be to generate the ***most net power*** while running on a ***real-time digital twin***. The net power is the absorbed mechanical power, less the winding losses in the motors. 
+Welcome to the FOSTWIN controller design competition! The purpose of this page is to outline the background, timeline, rules and scoring criteria for this competition. The key competition goal is to develop an effective power absorption controller for a digital twin of the [FOSWEC](https://energy.sandia.gov/foswec-testing-helps-validate-open-source-modeling-code/) device. The objective of this controller will be to generate the ***most net power*** while running on a ***real-time digital twin***. The net power is the absorbed mechanical power, less the winding losses in the motors. 
 
 The competition will focus on the FOSWEC v2 device tested at the [OSU O.H. Hinsdale Wave Research Laboratory](https://engineering.oregonstate.edu/facilities/wave-lab).
-The top 5 net power producing controllers will be selected based off data produced and gathered during realistic sea state simulations. The successful developers will be awarded bragging rights and up to $2,000 in travel expense reimbursement for attending the [MASK Basin](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) Workshop in **September 2023**.
+The top 5 net power producing controllers will be selected based on data produced and gathered during realistic sea state simulations. The successful developers will be awarded bragging rights and up to $2,000 in travel expense reimbursement for attending the [MASK Basin](https://www.defense.gov/Multimedia/Photos/igphoto/2001207018/#:~:text=The%20Navy's%20Indoor%20Ocean%20%2D%2D,Carderock%20Division%2C%20located%20in%20Maryland.) Workshop in **September 2023**.
 
 ![](images/FOSWEC2_HWRL.png)
 
 ## Background
 
-To foster the development of realistic real-time absorption control for wave energy, we have created the tools in this [open source repository](https://github.com/PMEC-OSU/FOSTWIN). Using these tools, a control developer (you!) can run a FOSWEC digital twin simulation and a simple power absorption controller within minutes. The developer can then design enhanced custom controllers, and test these controllers on a remote real-time Speedgoat system. This offers developer's the unique opportunity to test real-time control code behavior without needing their own real-time hardware.
+To foster the development of realistic real-time absorption control for wave energy, we have created the tools in this [open source repository](https://github.com/PMEC-OSU/FOSTWIN). Using these tools, a control developer (you!) can run a FOSWEC digital twin simulation and a simple power absorption controller within minutes. The developer can then design enhanced custom controllers, and test these controllers on a remote real-time Speedgoat system. This offers developers the unique opportunity to test real-time control code behavior without needing their own real-time hardware.
 
 ## Competition timeline
 
@@ -33,7 +33,7 @@ Please join our competition! We have made the control development system easy to
 1. Connect motivated WEC developers with industry leaders and researchers
 2. Build experience with developing **real-time** controllers to produce **net power** (electrical, or other useful work) in WEC devices
 3. Extend on content from the [2019 PMEC Workshop](https://www.energy.gov/eere/water/events/integrated-wec-design-theory-and-practice-workshop) (video below of PMEC Workshop) and learn about the FOSWEC device
-4. Acquire knowledge about WEC modeling and simulation in working with the [FOSTWIN](https://github.com/PMEC-OSU/FOSTWIN) open source repository
+4. Acquire knowledge about WEC modeling and simulation working with the [FOSTWIN](https://github.com/PMEC-OSU/FOSTWIN) open source repository
 5. Learn from Sandia WEC experts and the NAVY about developing System Identification (SID) methods from large scale testing to improve WEC modeling
 6. Deepen understanding of digital twin techniques between the [WECSim](https://wec-sim.github.io/WEC-Sim/master/index.html) and [System Identification](https://github.com/PMEC-OSU/FOSTWIN#system-identification-model) digital twins available in the interface.
  
@@ -55,7 +55,7 @@ In addition to the measurements collected and the numerical methods used in the 
 To participate in the competition, there are just a few steps to take:
 
 1. Become familiar with the [FOSWEC Digital Twin](https://github.com/PMEC-OSU/FOSTWIN)
-2. [Setup an account](#joining-instructions) to use our real-time capable Speedgoat environment
+2. [Set up an account](#joining-instructions) to use our real-time capable Speedgoat environment
 3. Develop a custom controller as a Simulink model & run the model in real-time through the provided web platform
 4. Collect & submit your results from the real-time simulation(s)
 
@@ -69,7 +69,7 @@ The following rules apply to the control competition:
 - Use the System Identification (SID) digital twin model provided [here](https://github.com/PMEC-OSU/FOSTWIN) (do NOT use the WECSim twin for the competition)
 - Use the provided SID admittance (includes drive train dynamics)
 - Do not make changes outside of the control model (FOSTWIN/ctrl/userCtrlModel block)
-- Run the entire model (including control) in real-time at 1kHz loop rate on our provided Speegoat Baseline target machine
+- Run the entire model (including control) in real-time at 1kHz loop rate on our provided Speedgoat Baseline target machine
 - Optimize net (mechanical - I2R winding loss) power capture for a JONSWAP (gamma=3.3) sea state with Hs of 0.136 m and Tp of 2.61s for a 300s simulation time
 - Use irregular waves seeded with 'default' for the random number generator. In scoring the results, we will evaluate with 5 additional seeds unknown to the developer
 
@@ -93,12 +93,12 @@ The following scoring criteria will be evaluated in the order listed, where the 
 5. Get familiar with the models and optionally start with the ctrlStarter.slx file provided
 6. Develop your custom controller. Most developers will do so in non-realtime mode (on your local PC). However, the various Matlab scripts are set up to work with realtime Speedgoat hardware if you have access to one.
 7. On one of the dates you scheduled in Step 3, login to the system, upload your model, set to competition mode, compile, and confirm that your controller can operate at 1 kHz loop rate on a baseline Speedgoat target.  
-8. Once satisfied, email your controller and your optimized control parameters (if relevant) to johannes@evergreeninnovations.co by **June 16th 2023** 
-9. If your controller is within the top 5 submissions, you'll be emailed with your results and we will arrange for up to $2,000 in travel reimbursement to attend the MASK Basin Workshop in September 2023.
+8. Once you are ready, email your controller and your optimized control parameters (if relevant) to johannes@evergreeninnovations.co by **June 16th, 2023** 
+9. If your controller is within the top 5 submissions, you'll be emailed with your results and we will arrange for up to $2,000 in travel expense reimbursement to attend the MASK Basin Workshop in September 2023.
 
 You must submit your entry as two files:
 
-- the `.mat` file containing the results of running you controller on the remote Speedgoat system (via the web-based interface)
+- the `.mat` file containing the results of running your controller on the remote Speedgoat system (via the web-based interface)
 - the `.slx` file for your controller
 
 ## Further reading
