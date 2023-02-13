@@ -27,7 +27,7 @@ param4 = 10; % NOT USED IN DEFAULT CONTROL - still needs to exist
 stopTime = '300';  % seconds
 
 % number of required in and out ports in controller model 
-N_IN = 2;
+N_IN = 3;
 N_OUT = 2;
 simu.paraview.option = 0;
 simu.b2b = 1; % enable body-body (flap->flap) interactions
@@ -38,11 +38,11 @@ waveType = 'irregular';
 
 % SWITCH COMMENT FOR CONTROLLER
 ctrlModelName = 'defaultCtrlModel';
-% ctrlModelName = 'ctrlStarter'; 
+%ctrlModelName = 'ctrlStarter'; 
 
 % SWITCH COMMENT FOR TWIN
-twinType = 'WECSim';
-%twinType = 'systemID';
+%twinType = 'WECSim';
+twinType = 'systemID';
 
 % SET YOUR SPEEDGOAT TARGET NAME HERE
 % example : pTgName = 'EGIBaseline';
@@ -256,12 +256,13 @@ for n=1:length(types)
     end
 end
 
-if in_count < N_IN || out_count < N_OUT
+if in_count ~= N_IN || out_count ~= N_OUT
     fprintf('Number of inports or outputs in uploaded control model are not correct.\n\n');
-    fprintf('Expected %d Inports and %d Outports.  Found %d Inports and %d Outports.\n\n', N_IN, N_OUT, in, out);
-    fprintf('Compilation Complete');
+    fprintf('Expected %d Inports and %d Outports.  Found %d Inports and %d Outports.\n\n', N_IN, N_OUT, in_count, out_count);
+    fprintf('Compilation cannot complete');
     return
 end
+
 
 % make sure the variant sub-system for udp send/recieve and fileLogging is
 % set to local - NO UDP
