@@ -22,6 +22,14 @@ For information on an exciting FOSTWIN control competition opportunity, please t
 
 # Model outline
 
+## Model Versions
+
+The remote system is running Matlab & Simulink version **r2022a**.  Any uploaded controller that exceed this version will not be able to compile. If you're running r2022b on your machine, you can save your model under the r2022a release with the following steps:
+
+1. Load your model in r2022b
+2. Select Save > Export Model to > Previous Version (r2022a)
+3. Upload the r2022a version saved in previous step.
+
 ## Top Level Model
 
 There are two digital twin models of the FOSWEC to choose from:  
