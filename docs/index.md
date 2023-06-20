@@ -23,7 +23,7 @@ Please join our competition! We have made the control development system easy to
 | [Motion and Vibration Control (MoViC 2022)](https://ifacms-movic2022.seas.ucla.edu/home/) info session | September 7-9, 2022 |
 | [OREC/UMERC+METS](https://pacificoceanenergy.org/orec/) info session | September 13-15, 2022 |
 | FOSTWIN info/ Q&A webinar [Microsoft Teams](https://teams.microsoft.com/l/meetup-join/19%3ameeting_YjIyM2M0NGUtZjVlMC00NTBiLTkzNWQtNjQ3MDI4MjBiNjhl%40thread.v2/0?context=%7b%22Tid%22%3a%227ccb5a20-a303-498c-b0c1-29007381b574%22%2c%22Oid%22%3a%228a3f0be9-1cb7-43e5-abcd-cde4ba053685%22%7d)| February 6th, 2023, 9:00 AM MT | 
-| Final submissions due | ~~June 16th, 2023~~ July 28th, 2023 |
+| Final submissions due | ~~June 16th, 2023~~ July 19th, 2023 |
 | MASK Basin workshop | September 2023 |
 
 
